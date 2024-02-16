@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:pds/screens/auth/on-boarding-slider.dart';
 import 'package:pds/screens/home.dart';
 
 class MyApp extends StatelessWidget {
 
   var kColorScheme = ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 7, 31, 84),
+    seedColor: const Color.fromARGB(255, 146, 227, 169),
   );
 
   var kDarkColorScheme = ColorScheme.fromSeed(
     brightness: Brightness.dark,
-    seedColor: const Color.fromARGB(255, 13, 126, 206),
+    seedColor: const Color.fromARGB(255, 7, 84, 72),
   );
 
 
@@ -65,7 +66,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // themeMode: ThemeMode.system, // default
-      home: HomeScreen(),
+      home: const onBoardingSlider(),
     );
   }
 }
