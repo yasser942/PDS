@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Awesome GridView'),
       ),
       body: _screens[_selectedIndex],
-      drawer: const MyDrawer(),
+      drawer:  MyDrawer(),
       bottomNavigationBar: Container(
         height: 60,
         decoration: BoxDecoration(

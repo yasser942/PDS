@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pds/screens/auth/LoginPage.dart';
+import 'package:pds/user-auth/firebase-auth-services.dart';
+
+import '../widgets/loading-indicator.dart';
+import 'auth/on-boarding-slider.dart';
 
 class MyDrawer extends StatelessWidget {
-  const MyDrawer({super.key});
-
+   MyDrawer({super.key});
+  var userEmail = FirebaseAuth.instance.currentUser?.email;
+  var name = FirebaseAuth.instance.currentUser?.displayName;
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -14,25 +21,26 @@ class MyDrawer extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             child: Text(
-              'Drawer Header',
+              name!,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Colors.white,
                 fontSize: 24,
               ),
             ),
           ),
           ListTile(
-            title: Text('Item 1'),
+            title: const Text('Item 1'),
             onTap: () {
               // Add your action when Item 1 is tapped
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: Text('Item 2'),
-            onTap: () {
-              // Add your action when Item 2 is tapped
-              Navigator.pop(context);
+            title: const Text('Sign Out'),
+            onTap: () async{
+              loadingIndicator(context);
+              await FirebaseAuthentication().signOut();
+             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const onBoardingSlider()));
             },
           ),
           // Add more list tiles as needed

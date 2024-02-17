@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pds/screens/auth/RegisterPage.dart';
 import 'package:pds/screens/auth/forgot-password.dart';
 import 'package:pds/screens/home.dart';
+
+import '../../user-auth/firebase-auth-services.dart';
+import '../../widgets/alert.dart';
+import '../../widgets/loading-indicator.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -13,6 +18,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  bool obscureText = true; // to control the visibility of the password
 
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
@@ -83,7 +89,7 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                   // Replace the TextField with a TextFormField
                   child: TextFormField(
-                    obscureText: true,
+                    obscureText: obscureText,
                     controller: passwordController,
                     style: const TextStyle(color: Colors.grey),
                     decoration: InputDecoration(
@@ -91,6 +97,17 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(20), // add this line
                       ),
                       labelText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(obscureText
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                      ),
+
                     ),
                     // Provide a validator function for the TextFormField
                     validator: (value) {
@@ -98,12 +115,7 @@ class _LoginState extends State<Login> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       }
-                      // Check if the input matches a strong password format using a regular expression
-                      if (!RegExp(
-                          r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+]).{8,}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a strong password';
-                      }
+
                       // Return null if the input is valid
                       return null;
                     },
@@ -125,21 +137,46 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
                     child: const Text('Login'),
-                    onPressed: () {
-                      // Call the validate method of the FormState before navigating to the next screen
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // If the form is valid, print the input and navigate to the next screen
-                        print(nameController.text);
-                        print(passwordController.text);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
-                        );
+                        try {
+                          final email = nameController.text;
+                          final password = passwordController.text;
+
+                          // Show a circular progress indicator
+                          loadingIndicator(context);
+
+                          // Use Firebase Authentication to sign in the user
+                          final userCredential = await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                            email: email,
+                            password: password,
+                          );
+
+
+
+                          // Navigate to the next screen after successful login
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          );
+                        } on FirebaseAuthException catch (e) {
+                          // Handle authentication errors
+                          print(e.message);
+
+                          // Dismiss the circular progress indicator
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          }
+
+                          // Show an alert to the user
+                          showAlert(context, e.message.toString(), 'Login Error');
+                        }
                       }
                     },
                   ),
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[

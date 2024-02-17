@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pds/screens/auth/LoginPage.dart';
+import 'package:pds/widgets/alert.dart';
+
+import '../../widgets/loading-indicator.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -25,9 +29,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return false;
   }
 
-  void _validateAndSubmit() {
+  void _validateAndSubmit() async{
     if (_validateAndSave()) {
-      // TODO: Perform password reset logic here
+      try {
+        final email = emailController.text;
+        loadingIndicator(context);
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        Navigator.pop(context);
+        // Show a circular progress indicator
+        showAlert(context, 'Password reset email sent!', 'Success');
+      } on FirebaseAuthException catch (e) {
+        showAlert(context, e.message.toString(), 'Error');
+
+      }
     }
   }
 
@@ -73,8 +87,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     labelText: 'Email',
                   ),
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    // Check if the input is empty
+                    if (value == null || value.isEmpty) {
                       return 'Please enter your email';
+                    }
+                    // Check if the input matches a valid email format using a regular expression
+                    if (! RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+                      return 'Please enter a valid email';
                     }
                     return null;
                   },

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import the firebase core plugin
+import 'package:firebase_auth/firebase_auth.dart'; // Import the firebase auth plugin
+import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
+import 'package:pds/screens/auth/LoginPage.dart';
 import 'package:pds/screens/auth/on-boarding-slider.dart';
 import 'package:pds/screens/home.dart';
 
@@ -13,6 +17,8 @@ class MyApp extends StatelessWidget {
     seedColor: const Color.fromARGB(255, 7, 84, 72),
   );
 
+  // Create a firebase auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   MyApp({super.key});
 
@@ -66,7 +72,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // themeMode: ThemeMode.system, // default
-      home: const onBoardingSlider(),
+      home: StreamBuilder<User?>(
+        stream: _auth.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            // If the user is logged in, show the home screen
+            return HomeScreen();
+          } else {
+            // If the user is not logged in, show the on-boarding slider
+            return onBoardingSlider();
+          }
+        },
+      ),
     );
   }
 }
