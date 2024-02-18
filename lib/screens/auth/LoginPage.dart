@@ -77,7 +77,7 @@ class _LoginState extends State<Login> {
                       }
                       // Check if the input matches a valid email format using a regular expression
                       if (! RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
+                          .hasMatch(value.trim())) {
                         return 'Please enter a valid email';
                       }
                       // Return null if the input is valid
@@ -140,8 +140,8 @@ class _LoginState extends State<Login> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         try {
-                          final email = nameController.text;
-                          final password = passwordController.text;
+                          final email = nameController.text.trim().toLowerCase();
+                          final password = passwordController.text.trim();
 
                           // Show a circular progress indicator
                           loadingIndicator(context);
@@ -155,11 +155,12 @@ class _LoginState extends State<Login> {
 
 
 
-                          // Navigate to the next screen after successful login
-                          Navigator.pushReplacement(
+                          Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(builder: (context) => const HomeScreen()),
+                                (Route<dynamic> route) => false,
                           );
+
                         } on FirebaseAuthException catch (e) {
                           // Handle authentication errors
                           print(e.message);

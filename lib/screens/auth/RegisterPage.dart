@@ -35,7 +35,7 @@ class _SignUpState extends State<SignUp> {
   final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   final RegExp phoneRegExp = RegExp(r'^0\d{10}$');
   final RegExp passwordRegExp = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$');
-  String _termsContent = Term().termsAndConditions;
+  final String _termsContent = Term().termsAndConditions;
   bool _termsAccepted = false; // Track terms acceptance
   void showTermsDialog() {
     showDialog(
@@ -66,10 +66,9 @@ class _SignUpState extends State<SignUp> {
   Future<void> _signUp() async {
 
     // Get the email and password from the text fields
-    String email = emailController.text;
-    String password = passwordController.text;
-    print('Email: $email');
-    print('Password: $password');
+    String email = emailController.text.trim().toLowerCase();
+    String password = passwordController.text.trim();
+
 
     // Try to create a new user with email and password
     User? user = await _firebaseAuth.createUserWithEmailAndPassword(email, password);
@@ -254,9 +253,9 @@ class _SignUpState extends State<SignUp> {
                           print(userCredential.user!.displayName);
 
                           // Upon successful registration, navigate to the next screen
-                          Navigator.pushReplacement(
+                          Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            MaterialPageRoute(builder: (context) => const HomeScreen()), (Route<dynamic> route) => false,
                           );
                         } on FirebaseAuthException catch (e) {
                           // **Improved error handling:**

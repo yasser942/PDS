@@ -32,7 +32,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   void _validateAndSubmit() async{
     if (_validateAndSave()) {
       try {
-        final email = emailController.text;
+        final email = emailController.text.trim();
         loadingIndicator(context);
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         Navigator.pop(context);

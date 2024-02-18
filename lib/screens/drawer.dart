@@ -1,32 +1,38 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pds/screens/auth/LoginPage.dart';
+import 'package:pds/user-auth/firebase-auth-services.dart';
+
+import '../widgets/loading-indicator.dart';
+import 'auth/on-boarding-slider.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:pds/user-auth/firebase-auth-services.dart';
 
 import '../widgets/loading-indicator.dart';
 import 'auth/on-boarding-slider.dart';
 
 class MyDrawer extends StatelessWidget {
-   MyDrawer({super.key});
-  var userEmail = FirebaseAuth.instance.currentUser?.email;
-  var name = FirebaseAuth.instance.currentUser?.displayName;
+  MyDrawer({super.key});
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
+    final User? user = _auth.currentUser;
+    final String name = user?.displayName ?? 'User Name';
+    final String email = user?.email ?? 'user@example.com';
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+          UserAccountsDrawerHeader(
+            currentAccountPicture: CircleAvatar(
+              backgroundImage:AssetImage("assets/avatar.jpg") , // Load from user's photoURL or provide a placeholder
             ),
-            child: Text(
-              name!,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
+            accountName: Text(name),
+            accountEmail: Text(email),
           ),
           ListTile(
             title: const Text('Item 1'),
@@ -37,10 +43,10 @@ class MyDrawer extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Sign Out'),
-            onTap: () async{
+            onTap: () async {
               loadingIndicator(context);
               await FirebaseAuthentication().signOut();
-             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const onBoardingSlider()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const onBoardingSlider()));
             },
           ),
           // Add more list tiles as needed
@@ -49,3 +55,4 @@ class MyDrawer extends StatelessWidget {
     );
   }
 }
+
