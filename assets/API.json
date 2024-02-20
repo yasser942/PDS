@@ -1,0 +1,43 @@
+{
+  "coord": {
+    "lon": 27.2315,
+    "lat": 38.3543
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "few clouds",
+      "icon": "02d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 286.37,
+    "feels_like": 285.08,
+    "temp_min": 286.37,
+    "temp_max": 286.37,
+    "pressure": 1023,
+    "humidity": 51
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 7.72,
+    "deg": 350
+  },
+  "clouds": {
+    "all": 20
+  },
+  "dt": 1708268287,
+  "sys": {
+    "type": 1,
+    "id": 6977,
+    "country": "TR",
+    "sunrise": 1708232344,
+    "sunset": 1708271481
+  },
+  "timezone": 10800,
+  "id": 301017,
+  "name": "Sarnıç",
+  "cod": 200
+}

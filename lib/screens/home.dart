@@ -4,7 +4,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/MapPage.dart';
 import 'package:pds/screens/drawer.dart';
 import 'grid_view.dart';
-import 'second_page.dart';
+import 'weather.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,19 +15,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  final List<Widget> _screens = [
-    MyGridView(),
-    MapPage(),
-    const MySecondPage(),
-  ]; // Store screens for easier reference
+  final Map<Widget,String> _screens = {
+    MyGridView():'Home',
+    MapPage():'Map',
+     WeatherPage():'Weather',
+  }; // Store screens for easier reference
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Awesome GridView'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_none_outlined),
+            onPressed: () {
+              // Add your onPressed action here
+            },
+          ),
+        ],
+
+        title: Text(_screens.values.toList()[_selectedIndex]),
+
       ),
-      body: _screens[_selectedIndex],
+      body: _screens.keys.toList()[_selectedIndex],
       drawer:  MyDrawer(),
       bottomNavigationBar: Container(
         height: 60,
@@ -60,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
               text: 'map',
             ),
             GButton(
-              icon: LineIcons.search,
-              text: 'Search',
+              icon: LineIcons.sun,
+              text: 'Weather',
             ),
           ],
           selectedIndex: _selectedIndex,

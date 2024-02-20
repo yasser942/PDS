@@ -20,7 +20,7 @@ class GridItem extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Center(
             child: Text(
-              'Item $itemNumber',
+              'Location $itemNumber',
               style: Theme.of(context).textTheme.headline6,
             ),
           ),
