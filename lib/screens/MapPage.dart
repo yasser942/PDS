@@ -8,7 +8,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late GoogleMapController mapController;
-  final LatLng _initialLocation = const LatLng(37.7749, -122.4194); // San Francisco coordinates
+  final LatLng _initialLocation = const LatLng(38.382829, 27.179650); // San Francisco coordinates
   final List<Marker> _markers = []; // List to store markers for places
 
   // List of places with their coordinates

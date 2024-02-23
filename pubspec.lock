@@ -97,6 +97,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+  draggable_home:
+    dependency: "direct main"
+    description:
+      name: draggable_home
+      sha256: c89a1faa702712b2db4ef5c6615b6a7819aa0aa0b03c0ba79c7e17d042880b2a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   fake_async:
     dependency: transitive
     description:
@@ -169,6 +177,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
+  firebase_database:
+    dependency: "direct main"
+    description:
+      name: firebase_database
+      sha256: "8568ad41f9312ab1f162f70c1e3e7cb7420b8bc8d07e4d543e575bb0cb41f8a5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.4.0"
+  firebase_database_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_database_platform_interface
+      sha256: "4366ade2390f8799a317bb13af29c2a1fdfc84f4d04372094756b86a6cbfd305"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.5+16"
+  firebase_database_web:
+    dependency: transitive
+    description:
+      name: firebase_database_web
+      sha256: "4920a83b917493b37fd408cbb01c289ef8a422d9ed48982f908a9850290262f9"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.3+16"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -480,6 +512,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  percent_indicator:
+    dependency: "direct main"
+    description:
+      name: percent_indicator
+      sha256: c37099ad833a883c9d71782321cb65c3a848c21b6939b6185f0ff6640d05814c
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.3"
   platform:
     dependency: transitive
     description:
@@ -520,6 +560,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  shaky_animated_listview:
+    dependency: "direct main"
+    description:
+      name: shaky_animated_listview
+      sha256: "5925c5865eb86c886e21e2c2eb3137ffb0b14f73761f21aea246a646f67f39f5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   sky_engine:
     dependency: transitive
     description: flutter
