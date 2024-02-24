@@ -49,6 +49,8 @@ dependencies:
   draggable_home: ^1.0.5
   shaky_animated_listview: ^0.0.5
   percent_indicator: ^4.2.3
+  location: ^5.0.3
+  flutter_polyline_points: ^2.0.0
 
 
 

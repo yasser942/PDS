@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none_outlined),

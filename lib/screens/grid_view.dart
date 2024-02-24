@@ -29,6 +29,9 @@ class MyGridView extends StatelessWidget {
                 nodes[index].sound,
                 nodes[index].dust,
                 nodes,
+                nodes[index].address,
+                nodes[index].latitude,
+                nodes[index].longitude,
               ),
             ),
           );

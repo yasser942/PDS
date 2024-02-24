@@ -5,7 +5,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../screens/node.dart';
 
 
-Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,double temperature,double humidity,int gas,double sound,int dust ,List nodes) {
+Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,double temperature,double humidity,int gas,double sound,int dust ,List nodes,String address, double latitude, double longitude) {
   return Container(
     margin: const EdgeInsets.all(10),
     height: 400,
@@ -28,7 +28,7 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
     child: Stack(
       children: [
         Opacity(
-          opacity: 0.8,
+          opacity: 1,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
@@ -37,7 +37,7 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
                 end: Alignment.topCenter,
                 colors: [
                   Colors.white,
-                  Color(0xFF000000).withOpacity(0.2),
+                  const Color(0xFF000000).withOpacity(0.2),
                 ],
               ),
             ),
@@ -55,7 +55,9 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
                     sound: sound,
                     dust: dust,
                     nodes: nodes,
-
+                    address: address,
+                    latitude: latitude,
+                    longitude: longitude,
                   )),
                 );
               },
@@ -71,18 +73,31 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
                     children: [
                       Row(
                         children: [
-                          Text(
-                            '$id',
-                            style:
-                            Theme.of(context).textTheme.headline6,
+                          Flexible(
+                            child: Text(
+                              '$address',
+                              style:const TextStyle(
+                                color: Colors.black54,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              softWrap: true,
+                            ),
                           ),
                           const Spacer(),
                            CircularPercentIndicator(
+                             animation: true,
+                            animationDuration: 1500,
+
                             radius: 35.0,
                             lineWidth: 5.0,
-                            percent: 1.0,
-                            center:  const Text("Good"),
-                            progressColor: Colors.green,
+                             percent: index == 0 ? 1 : (index == 1 ? 0.3 : 0.75),
+
+                             center:  Text(
+                               index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
+
+                             ),
+                            progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
                           )
                         ],
                       )

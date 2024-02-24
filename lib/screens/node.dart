@@ -13,7 +13,9 @@ class NodeDetail extends StatefulWidget {
     required this.sound,
     required this.dust,
     required this.nodes,
-    Key? key,
+    required this.address,
+
+    Key? key, required this.latitude, required this.longitude,
   }) : super(key: key);
   final int index;
   final String id;
@@ -23,6 +25,9 @@ class NodeDetail extends StatefulWidget {
   final double sound;
   final int dust;
   final List nodes;
+  final String address;
+  final double latitude;
+  final double longitude;
 
 
   @override
@@ -31,18 +36,42 @@ class NodeDetail extends StatefulWidget {
 
 class _NodeDetailState extends State<NodeDetail> {
   final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
+  final List<Image> _images = [
+    Image.asset('assets/temperature.png'),
+    Image.asset('assets/humidity.png'),
+    Image.asset('assets/gas.png'),
+    Image.asset('assets/sound.png'),
+    Image.asset('assets/dust.png'),
+  ];
+  late Map<String, dynamic> data = {
+    'temperature': 0,
+    'humidity': 0,
+    'gas': 0,
+    'sound': 0,
+    'dust': 0,
+  };
 
   late GoogleMapController mapController;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+     data = {
+      'temperature': widget.temperature,
+      'humidity': widget.humidity,
+      'gas': widget.gas,
+      'sound': widget.sound,
+      'dust': widget.dust,
+    };
+
   }
 
 
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
+      appBarColor: Theme.of(context).colorScheme.secondary,
+
       fullyStretchable: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
@@ -50,22 +79,22 @@ class _NodeDetailState extends State<NodeDetail> {
           Navigator.pop(context);
         },
       ),
-      title: Text('${widget.id}'),
+      title: Text(widget.address),
       actions: [
         IconButton(onPressed: () {}, icon: const Icon(Icons.bar_chart)),
       ],
-      headerWidget: headerWidget(context),
+      headerWidget: headerWidget(context ,widget.latitude, widget.longitude),
       headerBottomBar: headerBottomBarWidget(),
       body: [
         listView(),
       ],
       expandedBody: MapPage(),
-      backgroundColor: Colors.white,
     );
   }
 
   Row headerBottomBarWidget() {
     return Row(
+
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -85,19 +114,19 @@ class _NodeDetailState extends State<NodeDetail> {
     );
   }
 
-  Widget headerWidget(BuildContext context) {
+  Widget headerWidget(BuildContext context ,double latitude, double longitude) {
     return GoogleMap(
       mapToolbarEnabled: false,
       zoomControlsEnabled: false,
       scrollGesturesEnabled: false,
-      initialCameraPosition: const CameraPosition(
-        target: LatLng(38.382829, 27.179650),
+      initialCameraPosition:  CameraPosition(
+        target: LatLng(latitude, longitude),
         zoom: 15,
       ),
       markers: Set<Marker>.from([
         Marker(
           markerId: const MarkerId('marker_1'),
-          position: const LatLng(38.382829, 27.179650),
+          position:  LatLng(latitude, longitude),
           infoWindow: InfoWindow(
             title: '${widget.id}',
             snippet: '5 Star Rating',
@@ -106,28 +135,29 @@ class _NodeDetailState extends State<NodeDetail> {
         ),
       ]),
     );
-    ;
   }
 
   ListView listView() {
+
     return ListView.builder(
       padding: const EdgeInsets.only(top: 0),
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 5,
       shrinkWrap: true,
-      itemBuilder: (context, index) => Sensor(context,Icon(Icons.thermostat_outlined),widget.nodes,widget.index),
+      itemBuilder: (context, index) => sensor(context,_images,data, _sensors,index),
     );
   }
 }
 
-Widget Sensor (BuildContext context,Icon icon,List nodes ,int index, ) {
+Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> sensors ,int index) {
   return Card(
+
     child: ListTile(
-      leading: CircleAvatar(
-        child: icon,
-      ),
-      title: Text('${nodes[index].id}'),
-      subtitle: Text('Humidity:'),
+
+      trailing: _images[index],
+     
+      title: Text('${sensors[index]}'),
+      subtitle: Text('${data[sensors[index]]}'),
 
     ),
   );

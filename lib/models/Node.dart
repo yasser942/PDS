@@ -6,6 +6,9 @@ class Node {
   late final double sound;
   late final int dust;
   late final String imageUrl;
+  late final String address;
+  late final double latitude;
+  late final double longitude;
 
 
   Node({
@@ -16,6 +19,10 @@ class Node {
     required this.sound,
     required this.dust,
     required this.imageUrl,
+    required this.address,
+    required this.latitude,
+    required this.longitude,
+
   });
     factory Node.fromJson(dynamic json) {
     return Node(
@@ -26,6 +33,9 @@ class Node {
       sound: json['SoundSensor'] ['Value'] as double,
       dust: json['GP2Y1010AU0F'] ['Value'] as int,
       imageUrl: json['imageUrl'] as String,
+      address: json['address'] as String,
+      latitude: json['latitude'] as double,
+      longitude: json['longitude'] as double,
     )
     ;
     }
