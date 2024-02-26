@@ -1,7 +1,8 @@
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pds/screens/MapPage.dart';
+import 'package:pds/pages/map_page.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class NodeDetail extends StatefulWidget {
   const NodeDetail({
@@ -54,7 +55,6 @@ class _NodeDetailState extends State<NodeDetail> {
   late GoogleMapController mapController;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
      data = {
       'temperature': widget.temperature,
@@ -71,7 +71,6 @@ class _NodeDetailState extends State<NodeDetail> {
   Widget build(BuildContext context) {
     return DraggableHome(
       appBarColor: Theme.of(context).colorScheme.secondary,
-
       fullyStretchable: false,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios),
@@ -88,7 +87,6 @@ class _NodeDetailState extends State<NodeDetail> {
       body: [
         listView(),
       ],
-      expandedBody: MapPage(),
     );
   }
 
@@ -103,7 +101,12 @@ class _NodeDetailState extends State<NodeDetail> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MapPage()),
+                MaterialPageRoute(
+                  builder: (context) => MapPage(
+                    latitude: widget.latitude,
+                    longitude: widget.longitude,
+                  ),
+                ),
               );
             },
             icon: const Icon(
@@ -116,24 +119,27 @@ class _NodeDetailState extends State<NodeDetail> {
 
   Widget headerWidget(BuildContext context ,double latitude, double longitude) {
     return GoogleMap(
-      mapToolbarEnabled: false,
-      zoomControlsEnabled: false,
-      scrollGesturesEnabled: false,
-      initialCameraPosition:  CameraPosition(
+      onMapCreated: (GoogleMapController controller) {
+        mapController = controller;
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(latitude, longitude),
+              zoom: 15,
+            ),
+          ),
+        );
+      },
+      initialCameraPosition: CameraPosition(
         target: LatLng(latitude, longitude),
         zoom: 15,
       ),
-      markers: Set<Marker>.from([
+      markers: {
         Marker(
-          markerId: const MarkerId('marker_1'),
-          position:  LatLng(latitude, longitude),
-          infoWindow: InfoWindow(
-            title: '${widget.id}',
-            snippet: '5 Star Rating',
-          ),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          markerId: MarkerId('1'),
+          position: LatLng(latitude, longitude),
         ),
-      ]),
+      },
     );
   }
 
@@ -153,10 +159,28 @@ Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> se
   return Card(
 
     child: ListTile(
+      leading: _images[index],
 
-      trailing: _images[index],
+      trailing: CircularPercentIndicator(
+        animation: true,
+        animationDuration: 1500,
+
+        radius: 25.0,
+        lineWidth: 5.0,
+        percent: index == 0 ? 1 : (index == 1 ? 0.3 : 0.75),
+
+        center:  Text(
+
+          index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
+          style: TextStyle(
+            fontSize: 10,
+          )
+
+        ),
+        progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
+      ),
      
-      title: Text('${sensors[index]}'),
+      title: Text('${sensors[index].toUpperCase()}'),
       subtitle: Text('${data[sensors[index]]}'),
 
     ),

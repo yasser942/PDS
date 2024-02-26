@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:pds/screens/MapPage.dart';
 import 'package:pds/screens/drawer.dart';
 import 'package:pds/screens/test.dart';
+import '../pages/map_page.dart';
 import 'grid_view.dart';
 import 'weather.dart';
 
@@ -18,8 +18,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final Map<Widget,String> _screens = {
     //Test():'Test',
+
     MyGridView():'Home',
-    MapPage():'Map',
+    //MapPage():'Map',
      WeatherPage():'Weather',
   }; // Store screens for easier reference
 
@@ -65,14 +66,12 @@ class _HomeScreenState extends State<HomeScreen> {
           color: Colors.black,
           tabs: const [
 
+
             GButton(
               icon: LineIcons.home,
               text: 'Home',
             ),
-            GButton(
-              icon: LineIcons.map,
-              text: 'map',
-            ),
+
             GButton(
               icon: LineIcons.sun,
               text: 'Weather',

@@ -1,46 +1,53 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:shaky_animated_listview/widgets/animated_listview.dart';
 import '../models/Node.dart';
 import '../widgets/animated-list-item.dart';
 
-class MyGridView extends StatelessWidget {
+class MyGridView extends StatefulWidget {
+  @override
+  State<MyGridView> createState() => _MyGridViewState();
+}
+
+class _MyGridViewState extends State<MyGridView> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Node>>(
-      future: fetchNodes(), // Call the asynchronous function to fetch nodes
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final nodes = snapshot.data!;
-          return AnimatedListView(
-            duration: 100,
-            extendedSpaceBetween: 30,
-            spaceBetween: 1,
-            children: List.generate(
-              nodes.length,
-                  (index) => ListItem(
-                context,
-                index,
-                nodes[index].imageUrl,
-                nodes[index].id,
-                nodes[index].temperature,
-                nodes[index].humidity,
-                nodes[index].gas,
-                nodes[index].sound,
-                nodes[index].dust,
-                nodes,
-                nodes[index].address,
-                nodes[index].latitude,
-                nodes[index].longitude,
-              ),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error fetching data'));
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {fetchNodes();});
       },
+      child: FutureBuilder<List<Node>>(
+        future: fetchNodes(), // Call the asynchronous function to fetch nodes
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final nodes = snapshot.data!;
+            return ListView(
+              physics: const BouncingScrollPhysics(),
+              children: List.generate(
+                nodes.length,
+                (index) => ListItem(
+                  context,
+                  index,
+                  nodes[index].imageUrl,
+                  nodes[index].id,
+                  nodes[index].temperature,
+                  nodes[index].humidity,
+                  nodes[index].gas,
+                  nodes[index].sound,
+                  nodes[index].dust,
+                  nodes,
+                  nodes[index].address,
+                  nodes[index].latitude,
+                  nodes[index].longitude,
+                ),
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error fetching data'));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 
