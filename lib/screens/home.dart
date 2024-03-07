@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/drawer.dart';
+import 'package:pds/screens/gemini.dart';
+import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'package:pds/screens/test.dart';
-import '../pages/map_page.dart';
+import 'map_page.dart';
 import 'grid_view.dart';
 import 'weather.dart';
 
@@ -16,12 +18,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  final Map<Widget,String> _screens = {
+  final Map<Widget, String> _screens = {
     //Test():'Test',
+    MyGridView(): 'Home',
+    LineChartSample2(): 'Statistics',
+    WeatherPage(): 'Weather',
+    GeminiChatUI(): 'Gemini',
 
-    MyGridView():'Home',
-    //MapPage():'Map',
-     WeatherPage():'Weather',
   }; // Store screens for easier reference
 
   @override
@@ -37,12 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
-
         title: Text(_screens.values.toList()[_selectedIndex]),
-
       ),
       body: _screens.keys.toList()[_selectedIndex],
-      drawer:  MyDrawer(),
+      drawer: MyDrawer(),
       bottomNavigationBar: Container(
         height: 60,
         decoration: BoxDecoration(
@@ -65,16 +66,21 @@ class _HomeScreenState extends State<HomeScreen> {
           tabBackgroundColor: Theme.of(context).colorScheme.secondary,
           color: Colors.black,
           tabs: const [
-
-
             GButton(
               icon: LineIcons.home,
               text: 'Home',
             ),
-
+            GButton(
+              icon: LineIcons.barChart,
+              text: 'Statistics',
+            ),
             GButton(
               icon: LineIcons.sun,
               text: 'Weather',
+            ),
+            GButton(
+              icon: LineIcons.facebookMessenger,
+              text: 'Gemini',
             ),
           ],
           selectedIndex: _selectedIndex,

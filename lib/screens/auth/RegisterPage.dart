@@ -1,12 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pds/screens/auth/LoginPage.dart';
 import 'package:pds/screens/home.dart';
-import 'package:pds/terms.dart';
-import 'package:pds/user-auth/firebase-auth-services.dart';
 import 'package:pds/widgets/alert.dart';
 
+import '../../consts.dart';
 import '../../widgets/loading-indicator.dart';
 
 class SignUp extends StatefulWidget {
@@ -20,12 +18,13 @@ class _SignUpState extends State<SignUp> {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   bool obscureText = true; // to control the visibility of the password
   final _formKey = GlobalKey<FormState>();
   User? user = FirebaseAuth.instance.currentUser;
 
-  // Create a firebase authentication instance
-  final FirebaseAuthentication _firebaseAuth = FirebaseAuthentication();
+
   // Create a variable to store the error message
   String _errorMessage = '';
 
@@ -35,7 +34,7 @@ class _SignUpState extends State<SignUp> {
   final RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   final RegExp phoneRegExp = RegExp(r'^0\d{10}$');
   final RegExp passwordRegExp = RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$%\^&\*]).{8,}$');
-  final String _termsContent = Term().termsAndConditions;
+  final String _termsContent = termsAndConditions;
   bool _termsAccepted = false; // Track terms acceptance
   void showTermsDialog() {
     showDialog(
@@ -71,7 +70,10 @@ class _SignUpState extends State<SignUp> {
 
 
     // Try to create a new user with email and password
-    User? user = await _firebaseAuth.createUserWithEmailAndPassword(email, password);
+    User? user = (await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    )) as User?;
 
     // If the user is not null, navigate to the home screen
     if (user != null) {

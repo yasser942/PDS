@@ -1,16 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pds/screens/MapPage.dart';
-import 'package:pds/screens/grid_view.dart';
-import 'package:pds/screens/weather.dart';
-import 'package:pds/user-auth/firebase-auth-services.dart';
-
-import '../widgets/loading-indicator.dart';
-import 'auth/on-boarding-slider.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:pds/user-auth/firebase-auth-services.dart';
 
 import '../widgets/loading-indicator.dart';
 import 'auth/on-boarding-slider.dart';
@@ -80,10 +71,32 @@ class MyDrawer extends StatelessWidget {
             leading: const Icon(Icons.exit_to_app),
             title: const Text('Sign Out'),
             onTap: () async {
-              loadingIndicator(context);
-              await FirebaseAuthentication().signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const onBoardingSlider()));
-            },
+              print("Sign Out");
+              showDialog(context: context, builder: (context) => AlertDialog(
+                title: const Text('Sign Out'),
+                content: const Text('Are you sure you want to sign out?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      loadingIndicator(context);
+                      await _auth.signOut();
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const onBoardingSlider()),
+                            (Route<dynamic> route) => false,
+                      );
+                    },
+                    child: const Text('Sign Out'),
+                  ),
+                ],
+              ),);
+
+              },
           ),
           // Add more list tiles as needed
         ],

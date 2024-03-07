@@ -1,7 +1,12 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:gemini_flutter/gemini_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pds/pages/map_page.dart';
+import 'package:line_icons/line_icons.dart';
+import 'package:pds/screens/map_page.dart';
+import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class NodeDetail extends StatefulWidget {
@@ -53,6 +58,7 @@ class _NodeDetailState extends State<NodeDetail> {
   };
 
   late GoogleMapController mapController;
+  String textData = '';
   @override
   void initState() {
     super.initState();
@@ -65,11 +71,93 @@ class _NodeDetailState extends State<NodeDetail> {
     };
 
   }
+  FlutterTts flutterTts = FlutterTts();
+
+  void textToSpeech(String text) async {
+    await flutterTts.setLanguage("en-US");
+    await flutterTts.setVolume(0.5);
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setPitch(1);
+    await flutterTts.speak(text);
+  }
+  getGeminiData() async {
+    final response = await GeminiHandler().geminiPro(text: "I am in ${widget.address} Izmir,please mention the place ,The weather is :hot and sunny. Potential health concerns: high UV index. Please provide recommendations for better health.");
+    textData = response?.candidates?.first.content?.parts?.first.text ?? "Failed to fetch data";
+    return textData;
+
+  }
+
+
 
 
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
+      floatingActionButton: FloatingActionButton(
+
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true, // Makes it truly expandable
+            builder: (context) {
+              return FractionallySizedBox( // Controls initial height
+                heightFactor: 0.8,
+                widthFactor: 1.0,
+                child: FutureBuilder(
+                  future: getGeminiData(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return SingleChildScrollView(
+                        child: Container(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min, // Important for content to expand
+                            children: [
+                              const Image(image: AssetImage('assets/Innovation-pana.png'),
+                                width: 200,
+                                height: 200,
+                              ),
+                              const SizedBox(height: 20),
+                              AnimatedTextKit(
+
+                                onFinished: () {
+                                  textToSpeech(snapshot.data);
+                                },
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    snapshot.data,
+                                    speed: const Duration(milliseconds: 25),
+                                    textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    cursor: "|",
+                                    curve: Curves.easeInOut,
+                                  ),
+                                ],
+                                totalRepeatCount: 1,
+                                pause: const Duration(milliseconds: 1000),
+                                displayFullTextOnTap: true,
+                                stopPauseOnTap: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              );
+            },
+          );
+        },
+        child: const Icon(LineIcons.commentDots),
+      )
+      ,
       appBarColor: Theme.of(context).colorScheme.secondary,
       fullyStretchable: false,
       leading: IconButton(
@@ -80,11 +168,22 @@ class _NodeDetailState extends State<NodeDetail> {
       ),
       title: Text(widget.address),
       actions: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.bar_chart)),
+        IconButton(onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>const LineChartSample2(),
+
+
+            ),
+          );
+
+        }, icon: const Icon(Icons.bar_chart)),
       ],
       headerWidget: headerWidget(context ,widget.latitude, widget.longitude),
       headerBottomBar: headerBottomBarWidget(),
       body: [
+
         listView(),
       ],
     );
@@ -105,6 +204,7 @@ class _NodeDetailState extends State<NodeDetail> {
                   builder: (context) => MapPage(
                     latitude: widget.latitude,
                     longitude: widget.longitude,
+                    address: widget.address,
                   ),
                 ),
               );
@@ -119,7 +219,10 @@ class _NodeDetailState extends State<NodeDetail> {
 
   Widget headerWidget(BuildContext context ,double latitude, double longitude) {
     return GoogleMap(
+      zoomControlsEnabled: false,
+      mapToolbarEnabled: false,
       onMapCreated: (GoogleMapController controller) {
+
         mapController = controller;
         mapController.animateCamera(
           CameraUpdate.newCameraPosition(
@@ -136,8 +239,11 @@ class _NodeDetailState extends State<NodeDetail> {
       ),
       markers: {
         Marker(
-          markerId: MarkerId('1'),
+          markerId: const MarkerId('1'),
           position: LatLng(latitude, longitude),
+          onTap: () {
+            print('Marker Tapped');
+          },
         ),
       },
     );
@@ -172,7 +278,7 @@ Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> se
         center:  Text(
 
           index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 10,
           )
 
