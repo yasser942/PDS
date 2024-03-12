@@ -5,6 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:gemini_flutter/gemini_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:pds/screens/ai_assistance.dart';
 import 'package:pds/screens/map_page.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -58,7 +59,7 @@ class _NodeDetailState extends State<NodeDetail> {
   };
 
   late GoogleMapController mapController;
-  String textData = '';
+
   @override
   void initState() {
     super.initState();
@@ -69,22 +70,19 @@ class _NodeDetailState extends State<NodeDetail> {
       'sound': widget.sound,
       'dust': widget.dust,
     };
-
   }
-  FlutterTts flutterTts = FlutterTts();
+  String? textData;
+  bool isLoading = false;
 
-  void textToSpeech(String text) async {
-    await flutterTts.setLanguage("en-US");
-    await flutterTts.setVolume(0.5);
-    await flutterTts.setSpeechRate(0.5);
-    await flutterTts.setPitch(1);
-    await flutterTts.speak(text);
-  }
   getGeminiData() async {
-    final response = await GeminiHandler().geminiPro(text: "I am in ${widget.address} Izmir,please mention the place ,The weather is :hot and sunny. Potential health concerns: high UV index. Please provide recommendations for better health.");
-    textData = response?.candidates?.first.content?.parts?.first.text ?? "Failed to fetch data";
-    return textData;
 
+    final response = await GeminiHandler().geminiPro(
+        text:
+        "I am in Hasan Ağa Bahçesi Izmir,please mention the place ,The weather is :hot and sunny. Potential health concerns: high UV index. Please provide recommendations for better health.");
+    textData = response?.candidates?.first.content?.parts?.first.text ??
+        "Failed to fetch data";
+    textData=textData!.replaceAll('*', '');
+    return textData;
   }
 
 
@@ -95,69 +93,30 @@ class _NodeDetailState extends State<NodeDetail> {
     return DraggableHome(
       floatingActionButton: FloatingActionButton(
 
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true, // Makes it truly expandable
-            builder: (context) {
-              return FractionallySizedBox( // Controls initial height
-                heightFactor: 0.8,
-                widthFactor: 1.0,
-                child: FutureBuilder(
-                  future: getGeminiData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return SingleChildScrollView(
-                        child: Container(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min, // Important for content to expand
-                            children: [
-                              const Image(image: AssetImage('assets/Innovation-pana.png'),
-                                width: 200,
-                                height: 200,
-                              ),
-                              const SizedBox(height: 20),
-                              AnimatedTextKit(
+        onPressed: () async{
+          setState(() { isLoading = true; }); // Start loading
 
-                                onFinished: () {
-                                  textToSpeech(snapshot.data);
-                                },
-                                animatedTexts: [
-                                  TypewriterAnimatedText(
-                                    snapshot.data,
-                                    speed: const Duration(milliseconds: 25),
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    cursor: "|",
-                                    curve: Curves.easeInOut,
-                                  ),
-                                ],
-                                totalRepeatCount: 1,
-                                pause: const Duration(milliseconds: 1000),
-                                displayFullTextOnTap: true,
-                                stopPauseOnTap: true,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  },
+          try {
+            await getGeminiData();
+
+            // Navigate only if the data fetch was successful
+            if (textData != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AIAssistance(textData: textData),
                 ),
               );
-            },
-          );
+            } else {
+              // Handle the error case, e.g., display an error message
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to fetch data')));
+            }
+          } finally {
+            setState(() { isLoading = false; } ); // Stop loading
+          }
         },
         child: const Icon(LineIcons.commentDots),
-      )
-      ,
+      ),
       appBarColor: Theme.of(context).colorScheme.secondary,
       fullyStretchable: false,
       leading: IconButton(
@@ -172,7 +131,7 @@ class _NodeDetailState extends State<NodeDetail> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>const LineChartSample2(),
+              builder: (context) => ThingSpeak(),
 
 
             ),
@@ -185,6 +144,13 @@ class _NodeDetailState extends State<NodeDetail> {
       body: [
 
         listView(),
+        const SizedBox(
+          height:10
+        ),
+        if (isLoading)
+          const Center(
+            child: CircularProgressIndicator(),
+          )
       ],
     );
   }
@@ -292,3 +258,13 @@ Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> se
     ),
   );
 }
+/*
+getGeminiData() async {
+  final response = await GeminiHandler().geminiPro(
+      text:
+      "I am in Hasan Ağa Bahçesi Izmir,please mention the place ,The weather is :hot and sunny. Potential health concerns: high UV index. Please provide recommendations for better health.");
+  textData = response?.candidates?.first.content?.parts?.first.text ??
+      "Failed to fetch data";
+  return textData;
+}
+*/

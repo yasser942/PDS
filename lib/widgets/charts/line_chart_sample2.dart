@@ -1,295 +1,127 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_thingspeak/flutter_thingspeak.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import '../../models/channel_model.dart';
 
-class LineChartSample2 extends StatefulWidget {
-  const LineChartSample2({super.key});
+class ThingSpeak extends StatefulWidget {
+  const ThingSpeak({super.key});
 
   @override
-  State<LineChartSample2> createState() => _LineChartSample2State();
+  State<ThingSpeak> createState() => _ThingSpeakState();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
-  List<Color> gradientColors = [
-    const Color(0xff23b6e6),
-    const Color(0xff02d39a),
-  ];
+class _ThingSpeakState extends State<ThingSpeak> {
+  final flutterThingspeak = FlutterThingspeakClient(
+      channelID: '2462238', options: {'results': '10'});
+  Channel? channel;
+  List<Feed> feeds = <Feed>[];
 
-  bool showAvg = false;
+  Future<void> getTemperatureData() async {
+    flutterThingspeak.initialize();
+    try {
+      // Get data from the ThingSpeak channel
+      final result = await flutterThingspeak.getFieldData('1');
+      print(result);
+
+      channel = Channel.fromJson(result);
+      feeds = (result['feeds'] as List<dynamic>)
+          .map((feed) => Feed.fromJson(feed))
+          .toList();
+
+      print(feeds);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Stack(
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1.70,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  right: 18,
-                  left: 12,
-                  top: 24,
-                  bottom: 12,
-                ),
-                child: LineChart(
-                  showAvg ? avgData() : mainData(),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 60,
-              height: 34,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    showAvg = !showAvg;
-                  });
-                },
-                child: Text(
-                  'avg',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+      body: SafeArea(
+        child: FutureBuilder(
+          future: getTemperatureData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                // Display an error message if there was an error fetching data
+                return Center(
+                  child: Text('Error loading data: ${snapshot.error}'),
+                );
+              }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
-  }
-
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 15,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '10K';
-        break;
-      case 3:
-        text = '30k';
-        break;
-      case 5:
-        text = '50k';
-        break;
-      default:
-        return Container();
-    }
-
-    return Text(text, style: style, textAlign: TextAlign.left);
-  }
-
-  LineChartData mainData() {
-    return LineChartData(
-      gridData: FlGridData(
-        show: true,
-        drawVerticalLine: true,
-        horizontalInterval: 1,
-        verticalInterval: 1,
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color:Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            interval: 1,
-            getTitlesWidget: bottomTitleWidgets,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            interval: 1,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-          ),
+              if (channel != null) {
+                return Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black45, width: .5),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5)),
+                      ),
+                      child: ListBody(
+                        children: [
+                          ListTile(
+                            title: const Text("Channel ID"),
+                            subtitle: Text(channel!.id.toString()),
+                          ),
+                          ListTile(
+                            title: const Text("Channel Name"),
+                            subtitle: Text(channel!.name),
+                          ),
+                          ListTile(
+                            title: const Text("Channel Description"),
+                            subtitle: Text(channel!.description),
+                          ),
+                          ListTile(
+                            title: const Text("Location"),
+                            subtitle: Text(
+                                "${channel!.latitude.toString()},${channel!.longitude}"),
+                          )
+                        ],
+                      ),
+                    ),
+                    SfCartesianChart(
+                        primaryXAxis: const CategoryAxis(),
+                        // Chart title
+                        title: const ChartTitle(text: 'Temperature Data Chart'),
+                        // Enable legend
+                        legend: const Legend(isVisible: true),
+                        // Enable tooltip
+                        tooltipBehavior: TooltipBehavior(enable: true),
+                        series: <CartesianSeries<Feed, String>>[
+                          LineSeries<Feed, String>(
+                              dataSource: feeds,
+                              xValueMapper: (Feed feed, _) =>
+                                  feed.createdAt.toString(),
+                              yValueMapper: (Feed feed, _) => feed.field1,
+                              name: 'Temperature',
+                              // Enable data label
+                              dataLabelSettings:  DataLabelSettings(
+                                  isVisible: true, color:Theme.of(context).primaryColor))
+                        ]),
+                  ],
+                );
+              } else {
+                // Display a message when data is not available
+                return const Center(
+                  child: Text('No data available.'),
+                );
+              }
+            } else {
+              // Display a loading indicator while data is being fetched
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: gradientColors,
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

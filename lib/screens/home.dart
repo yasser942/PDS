@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final Map<Widget, String> _screens = {
     //Test():'Test',
     MyGridView(): 'Home',
-    LineChartSample2(): 'Statistics',
+    ThingSpeak(): 'Statistics',
     WeatherPage(): 'Weather',
     GeminiChatUI(): 'Gemini',
 
