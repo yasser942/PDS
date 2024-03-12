@@ -58,6 +58,7 @@ dependencies:
   flutter_thingspeak: ^1.2.1
   syncfusion_flutter_charts: ^24.2.9
   webview_flutter: ^4.7.0
+  cloud_firestore: ^4.14.0
 
 
 

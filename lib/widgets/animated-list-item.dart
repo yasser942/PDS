@@ -2,17 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../models/Node2.dart';
 import '../screens/node.dart';
 
 
-Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,double temperature,double humidity,int gas,double sound,int dust ,List nodes,String address, double latitude, double longitude) {
+Widget ListItem (BuildContext context ,int index,Node node) {
   return Container(
     margin: const EdgeInsets.all(10),
     height: 400,
     width: 200,
     decoration: BoxDecoration(
       image:  DecorationImage(
-        image: CachedNetworkImageProvider(imageUrl),
+        image: CachedNetworkImageProvider(node.imageUrl),
         fit: BoxFit.cover,
       ),
       borderRadius: BorderRadius.circular(25),
@@ -44,7 +45,8 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
             child: InkWell(
               onTap: () {
                 // Add your onPressed action here
-                Navigator.push(
+
+              /*  Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => NodeDetail(
                     index: index,
@@ -59,7 +61,7 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
                     latitude: latitude,
                     longitude: longitude,
                   )),
-                );
+                );*/
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -75,7 +77,7 @@ Widget ListItem (BuildContext context ,int index,String imageUrl ,String id,doub
                         children: [
                           Flexible(
                             child: Text(
-                              '$address',
+                              '${node.name}',
                               style:const TextStyle(
                                 color: Colors.black54,
                                 fontSize: 25,

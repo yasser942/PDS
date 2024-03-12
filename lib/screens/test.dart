@@ -1,46 +1,79 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:pds/widgets/animated-list-item.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../models/Node.dart';
+import '../models/Node2.dart';
+
+
+
+
 
 class Test extends StatefulWidget {
-  const Test({super.key});
-
   @override
-  State<Test> createState() => _TestState();
+  _Test createState() => _Test();
 }
 
-class _TestState extends State<Test> {
-  List<Node> nodes = []; // Initialize empty list to store retrieved nodes
-
-  @override
-  void initState() {
-    super.initState();
-    loadData(); // Load data from Firebase when the widget is initialized
-  }
-
-  Future<void> loadData() async {
-    nodes = [];
-    final ref = FirebaseDatabase.instance.ref('nodes/');
-    final snapshot = await ref.get();
-
-    if (snapshot.exists) {
-      for (DataSnapshot child in snapshot.children) {
-        final node = Node.fromJson(child.value);
-        nodes.add(node);
-      }
-      setState(() {}); // Rebuild widget after data is loaded
-      print('Data loaded successfully.');
-    } else {
-      print('No data available.');
-    }
-  }
-
+class _Test extends State<Test> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('Hello'),
+      appBar: AppBar(
+        title: Text('Firestore Data Example'),
+      ),
+      body: FutureBuilder<List<Node>>(
+        future: fetchNodes(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Text('No data available');
+          } else {
+            List<Node> nodes = snapshot.data!;
+            return ListView.builder(
+              itemCount: nodes.length,
+              itemBuilder: (context, index) {
+                Node node = nodes[index];
+                return ListTile(
+                  title: Text(node.name),
+                  subtitle: Text('Latitude: ${node.latitude}, Longitude: ${node.longitude}'),
+                  onTap: () {
+                    // Handle node tap
+                    // You can access node.sensors for sensor data
+                    print('Node tapped: ${node.name}');
+                  },
+                );
+              },
+            );
+          }
+        },
+      ),
     );
   }
+
+  Future<List<Node>> fetchNodes() async {
+    QuerySnapshot nodesSnapshot = await FirebaseFirestore.instance.collection('nodes').get();
+
+    List<Node> nodes = [];
+    for (DocumentSnapshot nodeDoc in nodesSnapshot.docs) {
+      // Get node data
+      Map<String, dynamic> nodeData = nodeDoc.data() as Map<String, dynamic>;
+
+      // Query for sensors subcollection
+      QuerySnapshot sensorsSnapshot = await nodeDoc.reference.collection('sensors').get();
+
+      // Extract sensor data
+      List<Sensor> sensors = [];
+      for (DocumentSnapshot sensorDoc in sensorsSnapshot.docs) {
+        sensors.add(Sensor.fromSnapshot(sensorDoc));
+      }
+
+      // Create Node object with sensors
+      Node node = Node.fromMap(nodeData, sensors);
+      nodes.add(node);
+    }
+
+    return nodes;
+  }
 }
+

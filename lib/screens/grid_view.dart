@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import '../models/Node.dart';
+import '../models/Node2.dart';
 import '../widgets/animated-list-item.dart';
 
 class MyGridView extends StatefulWidget {
@@ -19,26 +20,18 @@ class _MyGridViewState extends State<MyGridView> {
         future: fetchNodes(), // Call the asynchronous function to fetch nodes
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final nodes = snapshot.data!;
+            List<Node> nodes = snapshot.data!;
+
             return ListView(
               physics: const BouncingScrollPhysics(),
               children: List.generate(
                 nodes.length,
-                (index) => ListItem(
-                  context,
-                  index,
-                  nodes[index].imageUrl,
-                  nodes[index].id,
-                  nodes[index].temperature,
-                  nodes[index].humidity,
-                  nodes[index].gas,
-                  nodes[index].sound,
-                  nodes[index].dust,
-                  nodes,
-                  nodes[index].address,
-                  nodes[index].latitude,
-                  nodes[index].longitude,
-                ),
+                (index){
+                  Node node = nodes[index];
+
+                  return ListItem(context, index, node);
+
+                },
               ),
             );
           } else if (snapshot.hasError) {
@@ -52,16 +45,28 @@ class _MyGridViewState extends State<MyGridView> {
   }
 
   Future<List<Node>> fetchNodes() async {
-    final ref = FirebaseDatabase.instance.ref('nodes/');
-    final snapshot = await ref.get();
+    QuerySnapshot nodesSnapshot = await FirebaseFirestore.instance.collection('nodes').get();
 
-    final nodes = <Node>[];
-    if (snapshot.exists) {
-      for (DataSnapshot child in snapshot.children) {
-        final node = Node.fromJson(child.value);
-        nodes.add(node);
+    List<Node> nodes = [];
+    for (DocumentSnapshot nodeDoc in nodesSnapshot.docs) {
+      // Get node data
+      Map<String, dynamic> nodeData = nodeDoc.data() as Map<String, dynamic>;
+
+      // Query for sensors subcollection
+      QuerySnapshot sensorsSnapshot = await nodeDoc.reference.collection('sensors').get();
+
+      // Extract sensor data
+      List<Sensor> sensors = [];
+      for (DocumentSnapshot sensorDoc in sensorsSnapshot.docs) {
+        sensors.add(Sensor.fromSnapshot(sensorDoc));
       }
+
+      // Create Node object with sensors
+      Node node = Node.fromMap(nodeData, sensors);
+      nodes.add(node);
     }
+    print(nodes[0].sensors);
+
     return nodes;
   }
 }
