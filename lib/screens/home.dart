@@ -19,7 +19,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final Map<Widget, String> _screens = {
-    Test():'Test',
+    //Test():'Test',
     MyGridView(): 'Home',
     ThingSpeak(): 'Statistics',
     WeatherPage(): 'Weather',

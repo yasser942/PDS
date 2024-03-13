@@ -72,6 +72,7 @@ class _Test extends State<Test> {
       Node node = Node.fromMap(nodeData, sensors);
       nodes.add(node);
     }
+    print(nodes[0].sensors[0]);
 
     return nodes;
   }

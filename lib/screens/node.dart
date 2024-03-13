@@ -10,31 +10,16 @@ import 'package:pds/screens/map_page.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../models/Node2.dart';
+
 class NodeDetail extends StatefulWidget {
   const NodeDetail({
     required this.index,
-    required this.id,
-    required this.temperature,
-    required this.humidity,
-    required this.gas,
-    required this.sound,
-    required this.dust,
-    required this.nodes,
-    required this.address,
-
-    Key? key, required this.latitude, required this.longitude,
+    required this.node,
+    Key? key,
   }) : super(key: key);
   final int index;
-  final String id;
-  final double temperature;
-  final double humidity;
-  final int gas;
-  final double sound;
-  final int dust;
-  final List nodes;
-  final String address;
-  final double latitude;
-  final double longitude;
+  final Node node;
 
 
   @override
@@ -42,7 +27,6 @@ class NodeDetail extends StatefulWidget {
 }
 
 class _NodeDetailState extends State<NodeDetail> {
-  final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
   final List<Image> _images = [
     Image.asset('assets/temperature.png'),
     Image.asset('assets/humidity.png'),
@@ -50,26 +34,31 @@ class _NodeDetailState extends State<NodeDetail> {
     Image.asset('assets/sound.png'),
     Image.asset('assets/dust.png'),
   ];
-  late Map<String, dynamic> data = {
+
+  final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
+
+
+  late GoogleMapController mapController;
+  late Map<String, dynamic> sensorMap = {
     'temperature': 0,
     'humidity': 0,
     'gas': 0,
     'sound': 0,
     'dust': 0,
   };
-
-  late GoogleMapController mapController;
-
   @override
   void initState() {
     super.initState();
-     data = {
-      'temperature': widget.temperature,
-      'humidity': widget.humidity,
-      'gas': widget.gas,
-      'sound': widget.sound,
-      'dust': widget.dust,
+     sensorMap = {
+      'temperature': widget.node.sensors[0].temperature,
+      'humidity': widget.node.sensors[0].humidity,
+      'gas': widget.node.sensors[0].gas,
+      'sound': widget.node.sensors[0].sound,
+      'dust': widget.node.sensors[0].dust,
     };
+
+
+
   }
   String? textData;
   bool isLoading = false;
@@ -125,7 +114,7 @@ class _NodeDetailState extends State<NodeDetail> {
           Navigator.pop(context);
         },
       ),
-      title: Text(widget.address),
+      title: Text(widget.node.name),
       actions: [
         IconButton(onPressed: () {
           Navigator.push(
@@ -139,7 +128,7 @@ class _NodeDetailState extends State<NodeDetail> {
 
         }, icon: const Icon(Icons.bar_chart)),
       ],
-      headerWidget: headerWidget(context ,widget.latitude, widget.longitude),
+      headerWidget: headerWidget(context ,double.parse(widget.node.latitude), double.parse(widget.node.longitude)),
       headerBottomBar: headerBottomBarWidget(),
       body: [
 
@@ -168,9 +157,9 @@ class _NodeDetailState extends State<NodeDetail> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => MapPage(
-                    latitude: widget.latitude,
-                    longitude: widget.longitude,
-                    address: widget.address,
+                    latitude: double.parse(widget.node.latitude) ,
+                    longitude: double.parse(widget.node.longitude),
+                    address: widget.node.name,
                   ),
                 ),
               );
@@ -222,12 +211,12 @@ class _NodeDetailState extends State<NodeDetail> {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 5,
       shrinkWrap: true,
-      itemBuilder: (context, index) => sensor(context,_images,data, _sensors,index),
+      itemBuilder: (context, index) => sensor(context,_images, widget.node.sensors,sensorMap,index,_sensors),
     );
   }
 }
 
-Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> sensors ,int index) {
+Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> sensorMap,int index ,List<String> _sensors) {
   return Card(
 
     child: ListTile(
@@ -251,9 +240,9 @@ Widget sensor (BuildContext context,List<Image>_images,Map data, List<String> se
         ),
         progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
       ),
-     
-      title: Text('${sensors[index].toUpperCase()}'),
-      subtitle: Text('${data[sensors[index]]}'),
+
+      title: Text('${_sensors[index].toUpperCase()}'),
+      subtitle: Text('${sensorMap[_sensors[index]]}'),
 
     ),
   );

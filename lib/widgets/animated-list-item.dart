@@ -45,6 +45,13 @@ Widget ListItem (BuildContext context ,int index,Node node) {
             child: InkWell(
               onTap: () {
                 // Add your onPressed action here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NodeDetail(
+                    index: index,
+                    node: node,
+                  )),
+                );
 
               /*  Navigator.push(
                   context,
