@@ -36,30 +36,26 @@ class _NodeDetailState extends State<NodeDetail> {
   ];
 
   final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
+  Map<String, double> averageValues = {};
 
 
   late GoogleMapController mapController;
-  late Map<String, dynamic> sensorMap = {
-    'temperature': 0,
-    'humidity': 0,
-    'gas': 0,
-    'sound': 0,
-    'dust': 0,
-  };
+
   @override
   void initState() {
     super.initState();
-     sensorMap = {
-      'temperature': widget.node.sensors[0].temperature,
-      'humidity': widget.node.sensors[0].humidity,
-      'gas': widget.node.sensors[0].gas,
-      'sound': widget.node.sensors[0].sound,
-      'dust': widget.node.sensors[0].dust,
-    };
-
 
 
   }
+  Future<Map<String, double>> fetchSensorData() async {
+    try {
+      Map<String, double> averageValues = await widget.node.getAverageSensorValues(widget.node.id);
+      return averageValues;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   String? textData;
   bool isLoading = false;
 
@@ -204,19 +200,34 @@ class _NodeDetailState extends State<NodeDetail> {
     );
   }
 
-  ListView listView() {
-
-    return ListView.builder(
-      padding: const EdgeInsets.only(top: 0),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 5,
-      shrinkWrap: true,
-      itemBuilder: (context, index) => sensor(context,_images, widget.node.sensors,sensorMap,index,_sensors),
+  Widget listView() {
+    return Container(
+      child: FutureBuilder<Map<String, double>>(
+        future: fetchSensorData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            Map<String, double> averageValues = snapshot.data!;
+            return ListView.builder(
+              padding: const EdgeInsets.only(top: 0),
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 5,
+              shrinkWrap: true,
+              itemBuilder: (context, index) =>
+                  sensor(context, _images, widget.node.sensors, averageValues, index, _sensors),
+            );
+          }
+        },
+      ),
     );
   }
+
 }
 
-Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> sensorMap,int index ,List<String> _sensors) {
+Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors) {
   return Card(
 
     child: ListTile(
@@ -242,7 +253,7 @@ Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Ma
       ),
 
       title: Text('${_sensors[index].toUpperCase()}'),
-      subtitle: Text('${sensorMap[_sensors[index]]}'),
+      subtitle: Text('${averageValues[_sensors[index]]}'),
 
     ),
   );
