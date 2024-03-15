@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/drawer.dart';
 import 'package:pds/screens/gemini.dart';
+import 'package:pds/screens/general_weather.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'package:pds/screens/test.dart';
 import 'map_page.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //Test():'Test',
     MyGridView(): 'Home',
     ThingSpeak(): 'Statistics',
-    WeatherPage(): 'Weather',
+    GeneralWeather(): 'Weather',
     GeminiChatUI(): 'Gemini',
 
   }; // Store screens for easier reference

@@ -1,5 +1,6 @@
 const String GOOGLE_MAPS_API_KEY = "AIzaSyAIETSLzFWijOhzN-aCTTW8C-mzFs-5FBs";
 const String GEM ="AIzaSyDbBoJBjJGSCYrl3SSzZqzZX1E4qCdJZi0";
+const String OPENWEATHER_API_KEY="bebf311168a3d7cf781942f2cae082ee";
 const String termsAndConditions = """
 Terms and Conditions
 

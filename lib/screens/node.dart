@@ -85,6 +85,7 @@ class _NodeDetailState extends State<NodeDetail> {
   Widget build(BuildContext context) {
     return DraggableHome(
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
 
         onPressed: () async{
           setState(() { isLoading = true; }); // Start loading
@@ -108,7 +109,7 @@ class _NodeDetailState extends State<NodeDetail> {
             setState(() { isLoading = false; } ); // Stop loading
           }
         },
-        child: const Icon(LineIcons.commentDots),
+        child: const Icon(LineIcons.commentDots, color: Colors.white),
       ),
       appBarColor: Theme.of(context).colorScheme.secondary,
       fullyStretchable: false,
@@ -237,6 +238,8 @@ class _NodeDetailState extends State<NodeDetail> {
 
 Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors ,List<String> _units) {
   return Card(
+    color: Theme.of(context).colorScheme.secondary,
+
 
     child: ListTile(
       leading: _images[index],
@@ -253,6 +256,7 @@ Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Ma
 
           index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
           style: const TextStyle(
+            color: Colors.white,
             fontSize: 10,
           )
 
@@ -260,8 +264,16 @@ Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Ma
         progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
       ),
 
-      title: Text('${_sensors[index].toUpperCase()}'),
-      subtitle: Text('${averageValues[_sensors[index]]} ${_units[index]}'),
+      title: Text('${_sensors[index].toUpperCase()}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 15,
+        ),  ),
+      subtitle: Text('${averageValues[_sensors[index]]} ${_units[index]}',
+        style: const TextStyle(
+          color: Colors.white70,
+          fontSize: 14,)
+      ),
 
     ),
   );
