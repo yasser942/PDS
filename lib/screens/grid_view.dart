@@ -65,7 +65,6 @@ class _MyGridViewState extends State<MyGridView> {
       Node node = Node.fromMap(nodeData, sensors);
       nodes.add(node);
     }
-    print(nodes[0].sensors);
 
     return nodes;
   }

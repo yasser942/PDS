@@ -44,7 +44,7 @@ class Node {
           .toList();
 
       double averageValue = sensorValues.reduce((a, b) => a + b) / sensorValues.length;
-      averageValue=double.parse(averageValue.toStringAsFixed(3));
+      averageValue=double.parse(averageValue.toStringAsFixed(2));
 
       averageValues[sensorType] = averageValue;
     }

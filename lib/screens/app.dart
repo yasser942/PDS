@@ -1,12 +1,12 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Import the firebase core plugin
 import 'package:firebase_auth/firebase_auth.dart'; // Import the firebase auth plugin
-import 'package:flutter_onboarding_slider/flutter_onboarding_slider.dart';
-import 'package:pds/screens/auth/LoginPage.dart';
 import 'package:pds/screens/auth/on-boarding-slider.dart';
 import 'package:pds/screens/home.dart';
 
 class MyApp extends StatelessWidget {
+  final ConnectivityService _connectivityService = ConnectivityService();
+
 
   var kColorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 146, 227, 169),
@@ -77,13 +77,39 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             // If the user is logged in, show the home screen
-            return HomeScreen();
+            return const HomeScreen();
           } else {
             // If the user is not logged in, show the on-boarding slider
-            return onBoardingSlider();
+            return const onBoardingSlider();
           }
         },
       ),
+      navigatorObservers: [_connectivityService],
     );
+  }
+}
+class ConnectivityService extends NavigatorObserver {
+  final Connectivity _connectivity = Connectivity();
+
+  ConnectivityService() {
+    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        showDialog(
+          context: navigator!.context,
+          builder: (context) => AlertDialog(
+            title: const Text('No Internet'),
+            content: const Text('You are not connected to the internet.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 }

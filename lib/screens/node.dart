@@ -36,6 +36,7 @@ class _NodeDetailState extends State<NodeDetail> {
   ];
 
   final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
+  final List<String> _units = ['°C', '%', 'ppm', 'dB', 'ppm'];
   Map<String, double> averageValues = {};
 
 
@@ -63,7 +64,14 @@ class _NodeDetailState extends State<NodeDetail> {
 
     final response = await GeminiHandler().geminiPro(
         text:
-        "I am in Hasan Ağa Bahçesi Izmir,please mention the place ,The weather is :hot and sunny. Potential health concerns: high UV index. Please provide recommendations for better health.");
+        "I am in ${widget.node.name} , the latitude is ${widget.node.latitude} and the longitude is ${widget.node.longitude} ,"
+            "The temperature is ${averageValues['temperature']} degrees,"
+            "The humidity is ${averageValues['humidity']} percent,"
+            "The gas level is ${averageValues['gas']} ppm,"
+            "The sound level is ${averageValues['sound']} decibels,"
+            "The dust level is ${averageValues['dust']} ppm,"
+            "Please provide recommendation."
+       );
     textData = response?.candidates?.first.content?.parts?.first.text ??
         "Failed to fetch data";
     textData=textData!.replaceAll('*', '');
@@ -206,7 +214,7 @@ class _NodeDetailState extends State<NodeDetail> {
         future: fetchSensorData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
@@ -217,7 +225,7 @@ class _NodeDetailState extends State<NodeDetail> {
               itemCount: 5,
               shrinkWrap: true,
               itemBuilder: (context, index) =>
-                  sensor(context, _images, widget.node.sensors, averageValues, index, _sensors),
+                  sensor(context, _images, widget.node.sensors, averageValues, index, _sensors ,_units),
             );
           }
         },
@@ -227,7 +235,7 @@ class _NodeDetailState extends State<NodeDetail> {
 
 }
 
-Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors) {
+Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors ,List<String> _units) {
   return Card(
 
     child: ListTile(
@@ -253,7 +261,7 @@ Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Ma
       ),
 
       title: Text('${_sensors[index].toUpperCase()}'),
-      subtitle: Text('${averageValues[_sensors[index]]}'),
+      subtitle: Text('${averageValues[_sensors[index]]} ${_units[index]}'),
 
     ),
   );
