@@ -50,7 +50,7 @@ class _NodeDetailState extends State<NodeDetail> {
   }
   Future<Map<String, double>> fetchSensorData() async {
     try {
-      Map<String, double> averageValues = await widget.node.getAverageSensorValues(widget.node.id);
+      Map<String, double> averageValues = await widget.node.getAverageSensorValues();
       return averageValues;
     } catch (e) {
       throw e;

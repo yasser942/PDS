@@ -14,10 +14,13 @@ class _MyGridViewState extends State<MyGridView> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async {
-        setState(() {fetchNodes();});
+        setState(() {
+
+          fetchAndLabelNodes();
+        });
       },
       child: FutureBuilder<List<Node>>(
-        future: fetchNodes(), // Call the asynchronous function to fetch nodes
+        future: fetchAndLabelNodes(), // Call the asynchronous function to fetch nodes
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Node> nodes = snapshot.data!;
@@ -44,7 +47,7 @@ class _MyGridViewState extends State<MyGridView> {
     );
   }
 
-  Future<List<Node>> fetchNodes() async {
+  Future<List<Node>> fetchAndLabelNodes() async {
     QuerySnapshot nodesSnapshot = await FirebaseFirestore.instance.collection('nodes').get();
 
     List<Node> nodes = [];
@@ -66,6 +69,9 @@ class _MyGridViewState extends State<MyGridView> {
       nodes.add(node);
     }
 
-    return nodes;
+    // Label the nodes
+    List<Node> labeledNodes = await Node.labelAndOrderNodes(nodes);
+
+    return labeledNodes;
   }
 }

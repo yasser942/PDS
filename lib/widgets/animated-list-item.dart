@@ -28,6 +28,7 @@ Widget ListItem (BuildContext context ,int index,Node node) {
     ),
     child: Stack(
       children: [
+
         Opacity(
           opacity: 1,
           child: Container(
@@ -53,22 +54,7 @@ Widget ListItem (BuildContext context ,int index,Node node) {
                   )),
                 );
 
-              /*  Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NodeDetail(
-                    index: index,
-                    id: id,
-                    temperature: temperature,
-                    humidity: humidity,
-                    gas: gas,
-                    sound: sound,
-                    dust: dust,
-                    nodes: nodes,
-                    address: address,
-                    latitude: latitude,
-                    longitude: longitude,
-                  )),
-                );*/
+
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -94,19 +80,27 @@ Widget ListItem (BuildContext context ,int index,Node node) {
                             ),
                           ),
                           const Spacer(),
+
                            CircularPercentIndicator(
                              animation: true,
                             animationDuration: 1500,
 
-                            radius: 35.0,
+                            radius: 40.0,
                             lineWidth: 5.0,
-                             percent: index == 0 ? 1 : (index == 1 ? 0.3 : 0.75),
+                             percent: node.status == 'Perfect' ? 1 : (node.status == 'Bad' ? 0.3 : 0.75),
 
                              center:  Text(
-                               index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
-
+                               textAlign: TextAlign.center,
+                               '${node.distance}\n km',
+                               style: const TextStyle(
+                                 color: Colors.black54,
+                                 fontSize: 15,
+                                 fontWeight: FontWeight.bold,
+                               ),
                              ),
-                            progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
+
+
+                            progressColor: node.status == 'Perfect' ? Colors.green : (node.status == 'Bad' ? Colors.red : Colors.yellow),
                           )
                         ],
                       )
