@@ -48,13 +48,7 @@ class _LoginState extends State<Login> {
                 Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(10),
-                  child: Text(
-                    'Login App',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 30),
-                  ),
+
                 ),
                 Container(
                   padding: const EdgeInsets.all(10),

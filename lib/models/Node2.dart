@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 import '../consts.dart';
+enum SensorStatus { Perfect, Good, Bad }
 
 class Node {
   final String id;
@@ -162,7 +163,7 @@ class Node {
       ) async {
     String apiKey = GOOGLE_MAPS_API_KEY;
     String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=walking&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=driving&key=$apiKey';
 
     var response = await http.get(Uri.parse(url));
 
@@ -178,6 +179,40 @@ class Node {
       return double.infinity;
     }
   }
+
+  Map<String, String> evaluateSensors(Map<String, double> sensorValues) {
+    Map<String, String> sensorStatus = {};
+
+    // Define the thresholds for each sensor type as ranges
+    Map<String, Map<String, List<double>>> thresholds = {
+      'temperature': {'Perfect': [0.0, 25.0], 'Good': [25.0, 30.0]},
+      'humidity': {'Perfect': [0.0, 50.0], 'Good': [50.0, 60.0]},
+      'gas': {'Perfect': [0.0, 100.0], 'Good': [100.0, 200.0]},
+      'sound': {'Perfect': [0.0, 50.0], 'Good': [50.0, 75.0]},
+      'dust': {'Perfect': [0.0, 10.0], 'Good': [10.0, 20.0]},
+    };
+
+    // Evaluate each sensor type
+    sensorValues.forEach((type, value) {
+      if (thresholds.containsKey(type)) {
+        Map<String, List<double>> threshold = thresholds[type]!;
+        String status = 'Bad'; // Default status if not within any range
+        threshold.forEach((statusLabel, range) {
+          if (value >= range[0] && value < range[1]) {
+            status = statusLabel;
+          }
+        });
+        sensorStatus[type] = status;
+      } else {
+        sensorStatus[type] = 'Undefined'; // Sensor type not defined in thresholds
+      }
+    });
+
+    return sensorStatus;
+  }
+
+
+
 
 }
 
@@ -226,4 +261,6 @@ class Sensor {
         return 0.0;
     }
   }
+
+
 }

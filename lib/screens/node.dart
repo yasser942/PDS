@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,8 @@ class _NodeDetailState extends State<NodeDetail> {
   final List<String> _sensors = ['temperature', 'humidity', 'gas', 'sound', 'dust'];
   final List<String> _units = ['°C', '%', 'ppm', 'dB', 'ppm'];
   Map<String, double> averageValues = {};
+  Map <String, String> sensorStatus = {};
+
 
 
   late GoogleMapController mapController;
@@ -51,6 +55,8 @@ class _NodeDetailState extends State<NodeDetail> {
   Future<Map<String, double>> fetchSensorData() async {
     try {
       Map<String, double> averageValues = await widget.node.getAverageSensorValues();
+      sensorStatus= widget.node.evaluateSensors(averageValues);
+
       return averageValues;
     } catch (e) {
       throw e;
@@ -62,6 +68,10 @@ class _NodeDetailState extends State<NodeDetail> {
 
   getGeminiData() async {
 
+   if (averageValues.isEmpty) {
+      averageValues = await widget.node.getAverageSensorValues();
+      sensorStatus= widget.node.evaluateSensors(averageValues);
+    }
     final response = await GeminiHandler().geminiPro(
         text:
         "I am in ${widget.node.name} , the latitude is ${widget.node.latitude} and the longitude is ${widget.node.longitude} ,"
@@ -95,6 +105,7 @@ class _NodeDetailState extends State<NodeDetail> {
 
             // Navigate only if the data fetch was successful
             if (textData != null) {
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -226,7 +237,7 @@ class _NodeDetailState extends State<NodeDetail> {
               itemCount: 5,
               shrinkWrap: true,
               itemBuilder: (context, index) =>
-                  sensor(context, _images, widget.node.sensors, averageValues, index, _sensors ,_units),
+                  sensor(context, _images, widget.node.sensors, averageValues, index, _sensors ,_units ,sensorStatus),
             );
           }
         },
@@ -236,7 +247,7 @@ class _NodeDetailState extends State<NodeDetail> {
 
 }
 
-Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors ,List<String> _units) {
+Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Map <String,dynamic> averageValues,int index ,List<String> _sensors ,List<String> _units ,Map <String, String> sensorStatus) {
   return Card(
     color: Theme.of(context).colorScheme.secondary,
 
@@ -250,18 +261,18 @@ Widget sensor (BuildContext context,List<Image>_images, List<Sensor> sensors ,Ma
 
         radius: 25.0,
         lineWidth: 5.0,
-        percent: index == 0 ? 1 : (index == 1 ? 0.3 : 0.75),
+        percent: sensorStatus[_sensors[index]] == 'Perfect' ? 1 : (sensorStatus[_sensors[index]] == 'Bad' ? 0.3 : 0.75),
 
         center:  Text(
 
-          index == 0 ? 'Perfect' : (index == 1 ? 'Bad' : 'Good'),
+            sensorStatus[_sensors[index]] ?? '',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 10,
           )
 
         ),
-        progressColor: index == 0 ? Colors.green : (index == 1 ? Colors.red : Colors.yellow),
+        progressColor: sensorStatus[_sensors[index]] == 'Perfect' ? Colors.green : (sensorStatus[_sensors[index]] == 'Bad' ? Colors.red : Colors.yellow),
       ),
 
       title: Text('${_sensors[index].toUpperCase()}',

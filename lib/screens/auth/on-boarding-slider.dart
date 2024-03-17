@@ -54,15 +54,15 @@ class onBoardingSlider extends StatelessWidget {
       pageBackgroundColor: Colors.white,
       background: [
         Image.asset(
-          'assets/Directions-bro.png',
+          'assets/Directions.gif',
           height: 400,
         ),
         Image.asset(
-          'assets/Directions-bro.png',
+          'assets/Environment.gif',
           height: 400,
         ),
         Image.asset(
-          'assets/Directions-bro.png',
+          'assets/Taking care of the Earth.gif',
           height: 400,
         ),
       ],
@@ -80,7 +80,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 480,
               ),
               Text(
-                'On your way...',
+                'Looking for a clean place?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: kDarkBlueColor,
@@ -92,7 +92,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 20,
               ),
               const Text(
-                'to find the perfect looking Onboarding for your app?',
+                'Choose your destination and breathe in the fresh air.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black26,
@@ -115,7 +115,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 480,
               ),
               Text(
-                'You’ve reached your destination.',
+                'Discover the cleanest places',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: kDarkBlueColor,
@@ -127,7 +127,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 20,
               ),
               const Text(
-                'Sliding with animation',
+                'Find the best places to breathe in the fresh air.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black26,
@@ -150,7 +150,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 480,
               ),
               Text(
-                'Start now!',
+                'Let\'s start the journey!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: kDarkBlueColor,
@@ -162,7 +162,7 @@ class onBoardingSlider extends StatelessWidget {
                 height: 20,
               ),
               const Text(
-                'Where everything is possible and customize your onboarding.',
+                'Feel the fresh air and enjoy the nature.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black26,
