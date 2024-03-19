@@ -120,7 +120,7 @@ class _Test extends State<Test> {
     }
 
     // Label the nodes
-    List<Node> labeledNodes = await Node.labelAndOrderNodes(nodes);
+    List<Node> labeledNodes = await Node.labelAndOrderNodes(nodes,"walking");
 
     return labeledNodes;
   }

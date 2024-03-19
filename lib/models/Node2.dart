@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 
 import '../consts.dart';
+
 enum SensorStatus { Perfect, Good, Bad }
 
 class Node {
@@ -40,7 +41,13 @@ class Node {
 
   Future<Map<String, double>> getAverageSensorValues() async {
     Map<String, double> averageValues = {};
-    for (String sensorType in ['temperature', 'humidity', 'gas', 'sound', 'dust']) {
+    for (String sensorType in [
+      'temperature',
+      'humidity',
+      'gas',
+      'sound',
+      'dust'
+    ]) {
       QuerySnapshot sensorSnapshot = await FirebaseFirestore.instance
           .collection('nodes')
           .doc(id)
@@ -53,7 +60,8 @@ class Node {
           .map((doc) => Sensor.fromSnapshot(doc).getSensorValue(sensorType))
           .toList();
 
-      double averageValue = sensorValues.reduce((a, b) => a + b) / sensorValues.length;
+      double averageValue =
+          sensorValues.reduce((a, b) => a + b) / sensorValues.length;
       averageValue = double.parse(averageValue.toStringAsFixed(2));
 
       averageValues[sensorType] = averageValue;
@@ -75,36 +83,8 @@ class Node {
     }
   }
 
-  /*static Future<List<Node>> labelAndOrderNodes(List<Node> nodes) async {
-    List<Node> labeledNodes = [];
-    for (Node node in nodes) {
-      Map<String, double> averageValues = await node.getAverageSensorValues();
-      String status = node.evaluateNodeStatus(averageValues);
-      labeledNodes.add(Node(
-        id: node.id,
-        name: node.name,
-        latitude: node.latitude,
-        longitude: node.longitude,
-        sensors: node.sensors,
-        imageUrl: node.imageUrl,
-        status: status,
-      ));
-    }
-
-    // Sort labeled nodes based on status (best to worst)
-    labeledNodes.sort((a, b) {
-      // Define the order of statuses
-      Map<String, int> statusOrder = {'Perfect': 0, 'Good': 1, 'Bad': 2};
-      // Compare nodes based on status order
-      return statusOrder[a.status]!.compareTo(statusOrder[b.status]!);
-    });
-
-    return labeledNodes;
-  }
-
-   */
-
-  static Future<List<Node>> labelAndOrderNodes(List<Node> nodes) async {
+  static Future<List<Node>> labelAndOrderNodes(
+      List<Node> nodes, String mode) async {
     // Get the user's current location
     Position? userPosition = await _getCurrentLocation();
 
@@ -116,11 +96,11 @@ class Node {
     // Calculate distances for each node
     for (Node node in nodes) {
       double distance = await _calculateDistance(
-        userPosition.latitude,
-        userPosition.longitude,
-        double.parse(node.latitude),
-        double.parse(node.longitude),
-      );
+          userPosition.latitude,
+          userPosition.longitude,
+          double.parse(node.latitude),
+          double.parse(node.longitude),
+          mode);
 
       Map<String, double> averageValues = await node.getAverageSensorValues();
       String status = node.evaluateNodeStatus(averageValues);
@@ -144,10 +124,6 @@ class Node {
     return nodes;
   }
 
-
-
-
-
   static Future<Position> _getCurrentLocation() async {
     LocationPermission permission = await Geolocator.requestPermission();
     return await Geolocator.getCurrentPosition(
@@ -160,10 +136,10 @@ class Node {
       double startLongitude,
       double endLatitude,
       double endLongitude,
-      ) async {
+      String mode) async {
     String apiKey = GOOGLE_MAPS_API_KEY;
     String url =
-        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=driving&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=$mode&key=$apiKey';
 
     var response = await http.get(Uri.parse(url));
 
@@ -172,7 +148,7 @@ class Node {
       var routes = jsonResponse['routes'][0];
       var legs = routes['legs'][0];
       var distance = legs['distance'];
-      distance = double.parse(distance['value'].toString())/1000;
+      distance = double.parse(distance['value'].toString()) / 1000;
       return distance;
     } else {
       print('Request failed with status: ${response.statusCode}.');
@@ -185,11 +161,26 @@ class Node {
 
     // Define the thresholds for each sensor type as ranges
     Map<String, Map<String, List<double>>> thresholds = {
-      'temperature': {'Perfect': [0.0, 25.0], 'Good': [25.0, 30.0]},
-      'humidity': {'Perfect': [0.0, 50.0], 'Good': [50.0, 60.0]},
-      'gas': {'Perfect': [0.0, 100.0], 'Good': [100.0, 200.0]},
-      'sound': {'Perfect': [0.0, 50.0], 'Good': [50.0, 75.0]},
-      'dust': {'Perfect': [0.0, 10.0], 'Good': [10.0, 20.0]},
+      'temperature': {
+        'Perfect': [0.0, 25.0],
+        'Good': [25.0, 30.0]
+      },
+      'humidity': {
+        'Perfect': [0.0, 50.0],
+        'Good': [50.0, 60.0]
+      },
+      'gas': {
+        'Perfect': [0.0, 100.0],
+        'Good': [100.0, 200.0]
+      },
+      'sound': {
+        'Perfect': [0.0, 50.0],
+        'Good': [50.0, 75.0]
+      },
+      'dust': {
+        'Perfect': [0.0, 10.0],
+        'Good': [10.0, 20.0]
+      },
     };
 
     // Evaluate each sensor type
@@ -204,16 +195,13 @@ class Node {
         });
         sensorStatus[type] = status;
       } else {
-        sensorStatus[type] = 'Undefined'; // Sensor type not defined in thresholds
+        sensorStatus[type] =
+            'Undefined'; // Sensor type not defined in thresholds
       }
     });
 
     return sensorStatus;
   }
-
-
-
-
 }
 
 class Sensor {
@@ -261,6 +249,4 @@ class Sensor {
         return 0.0;
     }
   }
-
-
 }

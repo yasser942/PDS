@@ -38,7 +38,7 @@ Widget ListItem (BuildContext context ,int index,Node node) {
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
                 colors: [
-                  Colors.white,
+                  Theme.of(context).colorScheme.background,
                   const Color(0xFF000000).withOpacity(0.2),
                 ],
               ),

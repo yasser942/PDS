@@ -1,6 +1,7 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import the firebase auth plugin
+import 'package:pds/screens/auth/intro.dart';
 import 'package:pds/screens/auth/on-boarding-slider.dart';
 import 'package:pds/screens/home.dart';
 
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
             return const HomeScreen();
           } else {
             // If the user is not logged in, show the on-boarding slider
-            return const onBoardingSlider();
+            return const Intro();
           }
         },
       ),

@@ -19,11 +19,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+
   final Map<Widget, String> _screens = {
     //Test():'Test',
-    MyGridView(): 'Home',
-    ThingSpeak(): 'Statistics',
-    GeneralWeather(): 'Weather',
+    MyGridView(): 'Available Parks',
+    const ThingSpeak(): 'Statistics',
+    const GeneralWeather(): 'Weather',
     GeminiChatUI(): 'Gemini',
 
   }; // Store screens for easier reference
@@ -31,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:Theme.of(context).colorScheme.background,
+
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
@@ -57,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         child: GNav(
+          backgroundColor: Theme.of(context).colorScheme.background,
           rippleColor: Colors.grey[300]!,
           hoverColor: Colors.grey[100]!,
           gap: 8,

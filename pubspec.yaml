@@ -61,6 +61,9 @@ dependencies:
   cloud_firestore: ^4.14.0
   connectivity: ^3.0.6
   weather: ^3.1.1
+  flutter_markdown: ^0.6.21
+  music_visualizer: ^1.0.4
+  intro_screen_onboarding_flutter: ^1.0.0
 
 
 
