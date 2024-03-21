@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:pds/widgets/indicator.dart';
 import 'package:weather/weather.dart';
 import 'package:pds/consts.dart';
 
@@ -67,8 +68,8 @@ class _GeneralWeatherState extends State<GeneralWeather> {
 
   Widget _buildUI() {
     if (_weather == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return  Center(
+        child: indicator(context),
       );
     }
     return SingleChildScrollView(

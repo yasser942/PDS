@@ -83,8 +83,7 @@ class Node {
     }
   }
 
-  static Future<List<Node>> labelAndOrderNodes(
-      List<Node> nodes, String mode) async {
+  static Future<List<Node>> labelAndOrderNodes(List<Node> nodes, String mode) async {
     // Get the user's current location
     Position? userPosition = await _getCurrentLocation();
 

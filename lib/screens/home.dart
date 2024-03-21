@@ -5,10 +5,7 @@ import 'package:pds/screens/drawer.dart';
 import 'package:pds/screens/gemini.dart';
 import 'package:pds/screens/general_weather.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
-import 'package:pds/screens/test.dart';
-import 'map_page.dart';
 import 'grid_view.dart';
-import 'weather.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,20 +17,26 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  final Map<Widget, String> _screens = {
-    //Test():'Test',
-    MyGridView(): 'Available Parks',
-    const ThingSpeak(): 'Statistics',
-    const GeneralWeather(): 'Weather',
-    GeminiChatUI(): 'Gemini',
-
+  final Map<Widget, Map<String, dynamic>> _screens = {
+    //Test(): 'Test',
+    MyGridView(): {
+      'title': 'Available Parks',
+    },
+    const ThingSpeak(): {
+      'title': 'Statistics',
+    },
+    const GeneralWeather(): {
+      'title': 'Weather',
+    },
+    GeminiChatUI(): {
+      'title': 'Gemini',
+    },
   }; // Store screens for easier reference
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Theme.of(context).colorScheme.background,
-
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
@@ -44,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
         ],
-        title: Text(_screens.values.toList()[_selectedIndex]),
+        title: Text(_screens.values.toList()[_selectedIndex]['title']),
       ),
       body: _screens.keys.toList()[_selectedIndex],
       drawer: MyDrawer(),

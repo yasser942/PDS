@@ -8,7 +8,6 @@ import 'package:pds/screens/home.dart';
 class MyApp extends StatelessWidget {
   final ConnectivityService _connectivityService = ConnectivityService();
 
-
   var kColorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 146, 227, 169),
   );
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       // Your MaterialApp configuration
       darkTheme: ThemeData.dark().copyWith(
@@ -65,12 +64,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textTheme: ThemeData().textTheme.copyWith(
-          titleLarge: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: kColorScheme.onSecondaryContainer,
-            fontSize: 16,
-          ),
-        ),
+              titleLarge: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: kColorScheme.onSecondaryContainer,
+                fontSize: 16,
+              ),
+            ),
       ),
       // themeMode: ThemeMode.system, // default
       home: StreamBuilder<User?>(
@@ -89,6 +88,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class ConnectivityService extends NavigatorObserver {
   final Connectivity _connectivity = Connectivity();
 

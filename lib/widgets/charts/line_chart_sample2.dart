@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_thingspeak/flutter_thingspeak.dart';
+import 'package:pds/widgets/indicator.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../models/channel_model.dart';
 
@@ -115,8 +116,8 @@ class _ThingSpeakState extends State<ThingSpeak> {
               }
             } else {
               // Display a loading indicator while data is being fetched
-              return const Center(
-                child: CircularProgressIndicator(),
+              return  Center(
+                child: indicator(context),
               );
             }
           },

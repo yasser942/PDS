@@ -8,6 +8,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/ai_assistance.dart';
 import 'package:pds/screens/map_page.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
+import 'package:pds/widgets/indicator.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../models/Node2.dart';
@@ -148,8 +149,8 @@ class _NodeDetailState extends State<NodeDetail> {
         listView(),
         const SizedBox(height: 10),
         if (isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
+          Center(
+            child: indicator(context),
           )
       ],
     );
@@ -191,34 +192,32 @@ class _NodeDetailState extends State<NodeDetail> {
   }
 
   Widget listView() {
-    return Container(
-      child: FutureBuilder<Map<String, double>>(
-        future: fetchSensorData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            Map<String, double> averageValues = snapshot.data!;
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 0),
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
-              shrinkWrap: true,
-              itemBuilder: (context, index) => sensor(
-                  context,
-                  _images,
-                  widget.node.sensors,
-                  averageValues,
-                  index,
-                  _sensors,
-                  _units,
-                  sensorStatus),
-            );
-          }
-        },
-      ),
+    return FutureBuilder<Map<String, double>>(
+      future: fetchSensorData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: indicator(context));
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          Map<String, double> averageValues = snapshot.data!;
+          return ListView.builder(
+            padding: const EdgeInsets.only(top: 0),
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 5,
+            shrinkWrap: true,
+            itemBuilder: (context, index) => sensor(
+                context,
+                _images,
+                widget.node.sensors,
+                averageValues,
+                index,
+                _sensors,
+                _units,
+                sensorStatus),
+          );
+        }
+      },
     );
   }
 }

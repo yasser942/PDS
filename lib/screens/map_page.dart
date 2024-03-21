@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:location/location.dart';
 import 'package:pds/consts.dart';
+import 'package:pds/widgets/indicator.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage(
@@ -27,7 +28,18 @@ class _MapPageState extends State<MapPage> {
   bool trafficEnabled = true;
   MapType _currentMapType = MapType.normal;
 
-  //late BitmapDescriptor locationIcon;
+  _swithMapType() {
+    setState(() {
+      _currentMapType =
+          _currentMapType == MapType.normal ? MapType.satellite : MapType.normal;
+    });
+  }
+  _switchMapMode() async {
+    setState(() {
+      travelMode = (travelMode == TravelMode.walking) ? TravelMode.driving : TravelMode.walking;
+      trafficEnabled = !trafficEnabled;
+    });
+  }
 
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
@@ -63,8 +75,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _currentP == null
-            ? const Center(
-                child: CircularProgressIndicator(),
+            ?  Center(
+                child: indicator(context),
               )
             : GoogleMap(
                 zoomControlsEnabled: false,
@@ -83,7 +95,7 @@ class _MapPageState extends State<MapPage> {
                     icon: BitmapDescriptor.defaultMarkerWithHue(120.0),
                     position: _currentP!,
                     infoWindow: const InfoWindow(
-                      title: "Current Location",
+                      title: "My Location",
                     ),
                   ),
                   Marker(
@@ -102,45 +114,35 @@ class _MapPageState extends State<MapPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               FloatingActionButton(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 onPressed: () {
                   setState(() {
-                    travelMode = TravelMode.driving;
-                    trafficEnabled = true;
+                    _switchMapMode();
 
                     getPolylinePoints().then((coordinates) => {
                           generatePolyLineFromPoints(coordinates),
                         });
                   });
                 },
-                child: const Icon(Icons.drive_eta),
+                child: travelMode == TravelMode.driving
+                    ? const Icon(Icons.directions_car, color: Colors.white)
+                    : const Icon(Icons.directions_walk, color: Colors.white),
               ),
+
+
               const SizedBox(
                 width: 10,
               ),
               FloatingActionButton(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 onPressed: () {
                   setState(() {
-                    travelMode = TravelMode.walking;
-                    trafficEnabled = false;
-                    getPolylinePoints().then((coordinates) => {
-                          generatePolyLineFromPoints(coordinates),
-                        });
+                    _swithMapType();
                   });
                 },
-                child: const Icon(Icons.directions_walk),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _currentMapType = _currentMapType == MapType.normal
-                        ? MapType.satellite
-                        : MapType.normal;
-                  });
-                },
-                child: const Icon(Icons.map),
+                child: _currentMapType == MapType.normal
+                    ? const Icon(Icons.satellite, color: Colors.white)
+                    : const Icon(Icons.map, color: Colors.white),
               ),
             ],
           ),
