@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:location/location.dart';
@@ -30,13 +31,17 @@ class _MapPageState extends State<MapPage> {
 
   _swithMapType() {
     setState(() {
-      _currentMapType =
-          _currentMapType == MapType.normal ? MapType.satellite : MapType.normal;
+      _currentMapType = _currentMapType == MapType.normal
+          ? MapType.satellite
+          : MapType.normal;
     });
   }
+
   _switchMapMode() async {
     setState(() {
-      travelMode = (travelMode == TravelMode.walking) ? TravelMode.driving : TravelMode.walking;
+      travelMode = (travelMode == TravelMode.walking)
+          ? TravelMode.driving
+          : TravelMode.walking;
       trafficEnabled = !trafficEnabled;
     });
   }
@@ -62,6 +67,10 @@ class _MapPageState extends State<MapPage> {
             }),
       },
     );
+
+    getLocationUpdates();
+    Timer.periodic(const Duration(seconds: 10), (Timer t) => checkArrival()); // Check arrival every 10 seconds
+
     /*
     BitmapDescriptor.fromAssetImage(
         ImageConfiguration(size: Size(45, 45)),
@@ -75,7 +84,7 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _currentP == null
-            ?  Center(
+            ? Center(
                 child: indicator(context),
               )
             : GoogleMap(
@@ -128,8 +137,6 @@ class _MapPageState extends State<MapPage> {
                     ? const Icon(Icons.directions_car, color: Colors.white)
                     : const Icon(Icons.directions_walk, color: Colors.white),
               ),
-
-
               const SizedBox(
                 width: 10,
               ),
@@ -224,5 +231,41 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       polylines[id] = polyline;
     });
+  }
+  void checkArrival() {
+    if (_currentP != null) {
+      // Calculate the distance between the user's current position and the destination
+      double distanceInMeters = Geolocator.distanceBetween(
+        _currentP!.latitude,
+        _currentP!.longitude,
+        widget.latitude,
+        widget.longitude,
+      );
+
+      // Set a threshold distance (in meters) for considering the user to have arrived
+      double arrivalThreshold = 50; // Adjust this threshold as needed
+
+      // Check if the user is within the threshold distance of the destination
+      if (distanceInMeters <= arrivalThreshold) {
+        // Show a dialog indicating that the user has arrived at the destination
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Arrival Notification'),
+              content: const Text('You have arrived at your destination.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 }
