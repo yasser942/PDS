@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:gemini_flutter/gemini_flutter.dart';
 
 class GeminiChatUI extends StatefulWidget {
+  const GeminiChatUI({Key? key}) : super(key: key);
+
   @override
   _GeminiChatUIState createState() => _GeminiChatUIState();
 }
@@ -8,20 +12,36 @@ class GeminiChatUI extends StatefulWidget {
 class _GeminiChatUIState extends State<GeminiChatUI> {
   final _messageController = TextEditingController();
   final List<ChatMessage> _messages = [];
+  bool isWaitingForResponse = false; // Add this line
 
-  // Method to add a new message (replace with Gemini call later)
-  void _sendMessage(String text) {
+  // Method to add a new message and get Gemini's response
+  void _sendMessage(String text) async {
     setState(() {
       _messages.insert(0, ChatMessage(text: text, isUser: true));
-      // TODO: Fetch Gemini's response and add it as a new ChatMessage
+      isWaitingForResponse = true; // Add this line
     });
     _messageController.clear();
+
+    // Get Gemini's response
+    String geminiResponse = await getGeminiResponse(text);
+
+    setState(() {
+      _messages.insert(0, ChatMessage(text: geminiResponse, isUser: false));
+      isWaitingForResponse = false; // Add this line
+    });
+  }
+
+  Future<String> getGeminiResponse(String userMessage) async {
+    String textData = "";
+    final response = await GeminiHandler().geminiPro(text: userMessage);
+    textData = response?.candidates?.first.content?.parts?.first.text ??
+        "Failed to fetch data";
+    return textData;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
           Flexible(
@@ -44,15 +64,32 @@ class _GeminiChatUIState extends State<GeminiChatUI> {
                   child: TextField(
                     onChanged: (text) => setState(() {}),
                     controller: _messageController,
-                    onSubmitted: (text) => _sendMessage(text),
-                    decoration: const InputDecoration.collapsed(hintText: 'Send a message'),
+                    onSubmitted: (text) =>
+                    isWaitingForResponse ? null : _sendMessage(text), // Modify this line
+                    decoration: const InputDecoration.collapsed(
+                        hintText: 'Send a message'),
+                    enabled: !isWaitingForResponse, // Add this line
                   ),
                 ),
                 IconButton(
-
-
-                  icon: Icon(Icons.send,color: _messageController.text.isEmpty ? Colors.grey : Colors.green[300]),
-                  onPressed: () => _messageController.text.isEmpty ? null : _sendMessage(_messageController.text),
+                  icon: isWaitingForResponse
+                      ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                      : Icon(
+                    Icons.send,
+                    color: _messageController.text.isEmpty
+                        ? Colors.grey
+                        : Colors.green[300],
+                  ),
+                  onPressed: () => _messageController.text.isEmpty ||
+                      isWaitingForResponse
+                      ? null
+                      : _sendMessage(_messageController.text),
                 ),
               ],
             ),
@@ -68,7 +105,8 @@ class ChatMessage extends StatelessWidget {
   final String text;
   final bool isUser;
 
-  ChatMessage({required this.text, required this.isUser});
+  const ChatMessage({Key? key, required this.text, required this.isUser})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +125,29 @@ class ChatMessage extends StatelessWidget {
             bottomRight: const Radius.circular(20),
           ),
         ),
-        child: Text(text, style: const TextStyle(fontSize: 16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isUser)
+              Icon(
+                Icons.rocket_launch_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            if(isUser) Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 25,
+            ),
+            MarkdownBody(
+              data: text,
+              styleSheet: MarkdownStyleSheet(
+                p: const TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-

@@ -6,6 +6,7 @@ import 'package:pds/screens/gemini.dart';
 import 'package:pds/screens/general_weather.dart';
 import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'grid_view.dart';
+import 'notifications.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,8 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_none_outlined),
             onPressed: () {
-              // Add your onPressed action here
-            },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const Notifications(),
+                ),
+              );
+                  },
           ),
         ],
         title: Text(_screens.values.toList()[_selectedIndex]['title']),

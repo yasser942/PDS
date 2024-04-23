@@ -1,12 +1,15 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import the firebase auth plugin
 import 'package:pds/screens/auth/intro.dart';
 import 'package:pds/screens/auth/on-boarding-slider.dart';
 import 'package:pds/screens/home.dart';
+import 'package:pds/screens/notifications.dart';
 
 class MyApp extends StatelessWidget {
   final ConnectivityService _connectivityService = ConnectivityService();
+  final GlobalKey<NavigatorState> navigatorKey;
 
   var kColorScheme = ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 146, 227, 169),
@@ -20,11 +23,16 @@ class MyApp extends StatelessWidget {
   // Create a firebase auth instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  MyApp({super.key});
+  MyApp({super.key, required this.navigatorKey});
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return MaterialApp(
+      navigatorKey: navigatorKey,
+
       debugShowCheckedModeBanner: false,
       // Your MaterialApp configuration
       darkTheme: ThemeData.dark().copyWith(
