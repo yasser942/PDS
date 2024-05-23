@@ -25,7 +25,21 @@ class FirebaseApi {
     print('User granted permission: ${settings.authorizationStatus}');
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      // Parse the message data
+      String title = message.notification?.title ?? '';
+      String body = message.notification?.body ?? '';
+      String link = message.data['link'] ?? '';
+
+      // Add the notification to the Firestore collection
+      await ref.add({
+        'title': title,
+        'body': body,
+        'link': link,
+        'date': Timestamp.fromDate(DateTime.now()),
+      });
+
       _showNotificationDialog(message, navigatorKey);
+
     });
   }
 
@@ -52,6 +66,7 @@ class FirebaseApi {
           ),
           TextButton(
             onPressed: () {
+              Navigator.pop(context);
               navigatorKey.currentState!.push(MaterialPageRoute(builder: (context) => const Notifications()));
             },
             child: const Text('View'),

@@ -6,6 +6,8 @@ import 'dart:ui' as ui;
 
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/indicator.dart';
+
 class Notifications extends StatefulWidget {
   const Notifications({Key? key}) : super(key: key);
 
@@ -55,14 +57,8 @@ class _NotificationsState extends State<Notifications> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            centerTitle: true,
-            title: const Text(
-              'Notifications',
-            )),
         body: notifications.isEmpty
-            ? const Center(child: CircularProgressIndicator())
+            ?  Center(child: indicator(context))
             : RefreshIndicator(
                 onRefresh: getData,
                 child: ListView.builder(

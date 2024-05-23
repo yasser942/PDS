@@ -22,11 +22,8 @@ class MyDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/runze-shi-1kIyfRdLMxI-unsplash.jpg"),
-                fit: BoxFit.cover,
-              ),
+            decoration:  BoxDecoration(
+              color: Theme.of(context).colorScheme.secondary,
             ),
             currentAccountPicture: const CircleAvatar(
               backgroundImage:AssetImage("assets/avatar.jpg") , // Load from user's photoURL or provide a placeholder
@@ -93,12 +90,29 @@ class MyDrawer extends StatelessWidget {
                     },
                     child: const Text('Sign Out'),
                   ),
+
+
                 ],
+
               ),);
 
               },
           ),
           // Add more list tiles as needed
+          Column(
+
+
+            children: <Widget>[
+              const Divider(
+                height: 10.0,
+                thickness: 1.0,
+              ),
+              ListTile(
+                title: const Center(child: Text('App Version 1.0.0')),
+                onTap: () {},
+              ),
+            ],
+          )
         ],
       ),
     );

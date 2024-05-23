@@ -7,7 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/ai_assistance.dart';
 import 'package:pds/screens/map_page.dart';
-import 'package:pds/widgets/charts/line_chart_sample2.dart';
+import 'package:pds/screens/node-statistics.dart';
 import 'package:pds/widgets/indicator.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -90,6 +90,7 @@ class _NodeDetailState extends State<NodeDetail> {
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
+
       backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -136,7 +137,7 @@ class _NodeDetailState extends State<NodeDetail> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ThingSpeak(),
+                  builder: (context) =>  NodeStatistics(node:widget.node ),
                 ),
               );
             },

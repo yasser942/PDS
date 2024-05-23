@@ -4,7 +4,6 @@ import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/drawer.dart';
 import 'package:pds/screens/gemini.dart';
 import 'package:pds/screens/general_weather.dart';
-import 'package:pds/widgets/charts/line_chart_sample2.dart';
 import 'grid_view.dart';
 import 'notifications.dart';
 
@@ -23,14 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
     MyGridView(): {
       'title': 'Available Parks',
     },
-    const ThingSpeak(): {
-      'title': 'Statistics',
-    },
+
     const GeneralWeather(): {
       'title': 'Weather',
     },
-    GeminiChatUI(): {
+    const GeminiChatUI(): {
       'title': 'Gemini',
+    },
+    const Notifications(): {
+      'title': 'Notifications',
     },
   }; // Store screens for easier reference
 
@@ -40,19 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const Notifications(),
-                ),
-              );
-                  },
-          ),
-        ],
+
         title: Text(_screens.values.toList()[_selectedIndex]['title']),
       ),
       body: _screens.keys.toList()[_selectedIndex],
@@ -84,10 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: LineIcons.home,
               text: 'Home',
             ),
-            GButton(
-              icon: LineIcons.barChart,
-              text: 'Statistics',
-            ),
+
             GButton(
               icon: LineIcons.sun,
               text: 'Weather',
@@ -95,6 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
             GButton(
               icon: LineIcons.facebookMessenger,
               text: 'Gemini',
+            ),
+            GButton(
+              icon: LineIcons.bell,
+              text: 'Notifications',
             ),
           ],
           selectedIndex: _selectedIndex,
