@@ -18,16 +18,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final Map<Widget, Map<String, dynamic>> _screens = {
-    //Test(): 'Test',
     MyGridView(): {
       'title': 'Available Parks',
     },
 
     const GeneralWeather(): {
-      'title': 'Weather',
+      'title': 'General Weather',
     },
     const GeminiChatUI(): {
-      'title': 'Gemini',
+      'title': 'Chat with AI',
     },
     const Notifications(): {
       'title': 'Notifications',
