@@ -29,7 +29,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return false;
   }
 
-  void _validateAndSubmit() async{
+  void _validateAndSubmit() async {
     if (_validateAndSave()) {
       try {
         final email = emailController.text.trim();
@@ -40,7 +40,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         showAlert(context, 'Password reset email sent!', 'Success');
       } on FirebaseAuthException catch (e) {
         showAlert(context, e.message.toString(), 'Error');
-
       }
     }
   }
@@ -92,13 +91,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       return 'Please enter your email';
                     }
                     // Check if the input matches a valid email format using a regular expression
-                    if (! RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value.trim())) {
                       return 'Please enter a valid email';
                     }
                     return null;
                   },
-                  onSaved: (value) => emailController.text = value!,
+                  onSaved: (value) => emailController.text = value!.trim(),
                 ),
               ),
               Container(
@@ -107,7 +106,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 child: ElevatedButton(
                   onPressed: _validateAndSubmit,
                   child: const Text('Submit'),
-
                 ),
               ),
               Container(
@@ -116,7 +114,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   child: const Text('Back to Sign In'),
                   onPressed: () {
                     // navigate to the sign in screen
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Login())); // replace with your own route
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const Login())); // replace with your own route
                   },
                 ),
               ),

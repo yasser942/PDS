@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:pds/widgets/indicator.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+
+import '../widgets/animated-list-item.dart';
 
 class NodeStatistics extends StatefulWidget {
   const NodeStatistics({super.key, this.node});
@@ -125,7 +128,7 @@ class _NodeStatisticsState extends State<NodeStatistics> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: Container(
+          content: SizedBox(
             width: double.maxFinite,
             height: 400,
             child: Chart(
@@ -173,8 +176,9 @@ class _NodeStatisticsState extends State<NodeStatistics> {
                   humidityFeeds.isNotEmpty) {
                 return SingleChildScrollView(
                   child: Column(
+
                     children: [
-                      Container(
+                      /*Container(
                         margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.black45, width: .5),
@@ -198,7 +202,8 @@ class _NodeStatisticsState extends State<NodeStatistics> {
                             ),
                           ],
                         ),
-                      ),
+                      ),*/
+                      listItem(context, 0, widget.node ,false),
                       const Divider(
                         color: Colors.black54,
                         thickness: 0.5,
@@ -325,10 +330,28 @@ class SensorCard extends StatelessWidget {
           label: sensorType,
           color: color,
         ),
-        ElevatedButton(
+        IconButton(
           onPressed: onPredict,
-          child: Text('Discover the $sensorName for the next 3 days'),
-
+          icon: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.show_chart,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                'Discover the ${sensorName.toLowerCase()} for the next 3 days',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          tooltip:
+              'Discover the ${sensorName.toLowerCase()} for the next 3 days',
+          color: Theme.of(context).colorScheme.secondary,
         ),
         const SizedBox(height: 10),
       ],

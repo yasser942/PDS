@@ -21,7 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
     MyGridView(): {
       'title': 'Available Parks',
     },
-
     const GeneralWeather(): {
       'title': 'General Weather',
     },
@@ -33,17 +32,22 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   }; // Store screens for easier reference
 
+  void _onSelectItem(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
-
         title: Text(_screens.values.toList()[_selectedIndex]['title']),
       ),
       body: _screens.keys.toList()[_selectedIndex],
-      drawer: MyDrawer(),
+      drawer: MyDrawer(onSelectItem: _onSelectItem),
       bottomNavigationBar: Container(
         height: 60,
         decoration: BoxDecoration(
@@ -71,7 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: LineIcons.home,
               text: 'Home',
             ),
-
             GButton(
               icon: LineIcons.sun,
               text: 'Weather',

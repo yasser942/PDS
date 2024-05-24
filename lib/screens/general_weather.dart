@@ -119,7 +119,7 @@ class _GeneralWeatherState extends State<GeneralWeather> {
     return Column(
       children: [
         Text(
-          DateFormat("h:mm s a ").format(now),
+          DateFormat("h:mm:s a ").format(now),
           style: const TextStyle(
             fontSize: 35,
           ),

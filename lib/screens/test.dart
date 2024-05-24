@@ -1,13 +1,16 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:pds/widgets/indicator.dart';
-import 'dart:convert';
 
-import '../models/Node2.dart';
+import '../models/Node.dart';
 
 class Test extends StatefulWidget {
+  const Test({super.key});
+
   @override
   _Test createState() => _Test();
 }
@@ -29,15 +32,17 @@ class _Test extends State<Test> {
 
     // And these are the coordinates of the other point
 
-    double endLatitude = 38.41528959118612 ;
+    double endLatitude = 38.41528959118612;
     double endLongitude = 27.122969807156785;
 
     // Calculate the distance between the points
-    double distanceInMeters = Geolocator.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude);
+    double distanceInMeters = Geolocator.distanceBetween(
+        startLatitude, startLongitude, endLatitude, endLongitude);
     double distanceInKm = distanceInMeters / 1000;
 
     print('The distance between the two points is $distanceInKm km.');
   }
+
   void getDistance() async {
     String startLatitude = '38.3548489070842';
     String startLongitude = '27.231289842590055';
@@ -46,7 +51,8 @@ class _Test extends State<Test> {
     String apiKey = 'AIzaSyAIETSLzFWijOhzN-aCTTW8C-mzFs-5FBs';
 
     //String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&key=$apiKey';
-    String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=walking&key=$apiKey';
+    String url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$startLatitude,$startLongitude&destination=$endLatitude,$endLongitude&mode=walking&key=$apiKey';
 
     var response = await http.get(Uri.parse(url));
 
@@ -60,6 +66,7 @@ class _Test extends State<Test> {
       print('Request failed with status: ${response.statusCode}.');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +90,7 @@ class _Test extends State<Test> {
                 Node node = nodes[index];
                 return ListTile(
                   title: Text(node.status + ' ' + node.name),
-                  subtitle: Text(node.distance.toString() + ' km'   ),
+                  subtitle: Text(node.distance.toString() + ' km'),
                   onTap: () {
                     // Handle node tap
                     // You can access node.sensors for sensor data
@@ -99,7 +106,8 @@ class _Test extends State<Test> {
   }
 
   Future<List<Node>> fetchAndLabelNodes() async {
-    QuerySnapshot nodesSnapshot = await FirebaseFirestore.instance.collection('nodes').get();
+    QuerySnapshot nodesSnapshot =
+        await FirebaseFirestore.instance.collection('nodes').get();
 
     List<Node> nodes = [];
     for (DocumentSnapshot nodeDoc in nodesSnapshot.docs) {
@@ -107,7 +115,8 @@ class _Test extends State<Test> {
       Map<String, dynamic> nodeData = nodeDoc.data() as Map<String, dynamic>;
 
       // Query for sensors subcollection
-      QuerySnapshot sensorsSnapshot = await nodeDoc.reference.collection('sensors').get();
+      QuerySnapshot sensorsSnapshot =
+          await nodeDoc.reference.collection('sensors').get();
 
       // Extract sensor data
       List<Sensor> sensors = [];
@@ -121,7 +130,7 @@ class _Test extends State<Test> {
     }
 
     // Label the nodes
-    List<Node> labeledNodes = await Node.labelAndOrderNodes(nodes,"walking");
+    List<Node> labeledNodes = await Node.labelAndOrderNodes(nodes, "walking");
 
     return labeledNodes;
   }

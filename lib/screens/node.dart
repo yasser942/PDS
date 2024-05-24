@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini_flutter/gemini_flutter.dart';
@@ -11,7 +9,7 @@ import 'package:pds/screens/node-statistics.dart';
 import 'package:pds/widgets/indicator.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../models/Node2.dart';
+import '../models/Node.dart';
 
 class NodeDetail extends StatefulWidget {
   const NodeDetail({
@@ -90,7 +88,6 @@ class _NodeDetailState extends State<NodeDetail> {
   @override
   Widget build(BuildContext context) {
     return DraggableHome(
-
       backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -137,7 +134,7 @@ class _NodeDetailState extends State<NodeDetail> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>  NodeStatistics(node:widget.node ),
+                  builder: (context) => NodeStatistics(node: widget.node),
                 ),
               );
             },
@@ -186,9 +183,12 @@ class _NodeDetailState extends State<NodeDetail> {
   }
 
   Widget headerWidget(BuildContext context, double latitude, double longitude) {
-    return Image.network(
-      widget.node.imageUrl,
+    return FadeInImage.assetNetwork(
+      placeholder: 'assets/placeholder.gif', // Path to your placeholder image
+      image: widget.node.imageUrl,
       fit: BoxFit.cover,
+      fadeInDuration:
+          const Duration(seconds: 1), // Adjust duration for the fade effect
     );
   }
 

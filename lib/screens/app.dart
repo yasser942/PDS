@@ -1,11 +1,9 @@
 import 'package:connectivity/connectivity.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import the firebase auth plugin
-import 'package:pds/screens/auth/intro.dart';
-import 'package:pds/screens/auth/on-boarding-slider.dart';
+import 'package:flutter/material.dart';
 import 'package:pds/screens/home.dart';
-import 'package:pds/screens/notifications.dart';
+
+import 'auth/on-boarding-slider.dart';
 
 class MyApp extends StatelessWidget {
   final ConnectivityService _connectivityService = ConnectivityService();
@@ -27,9 +25,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return MaterialApp(
       navigatorKey: navigatorKey,
 
@@ -88,7 +83,7 @@ class MyApp extends StatelessWidget {
             return const HomeScreen();
           } else {
             // If the user is not logged in, show the on-boarding slider
-            return const Intro();
+            return const onBoardingSlider();
           }
         },
       ),

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pds/widgets/indicator.dart';
-import '../models/Node2.dart';
+
+import '../models/Node.dart';
 import '../widgets/animated-list-item.dart';
 
 class MyGridView extends StatefulWidget {
@@ -77,7 +78,7 @@ class _MyGridViewState extends State<MyGridView> {
                   (index) {
                     Node node = nodes[index];
 
-                    return ListItem(context, index, node);
+                    return listItem(context, index, node, true);
                   },
                 ),
               );

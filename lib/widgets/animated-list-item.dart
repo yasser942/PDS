@@ -2,17 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../models/Node2.dart';
+import '../models/Node.dart';
 import '../screens/node.dart';
 
-
-Widget ListItem (BuildContext context ,int index,Node node) {
+Widget listItem(BuildContext context, int index, Node node, bool clickable) {
   return Container(
     margin: const EdgeInsets.all(10),
     height: 400,
-    width: 200,
+    width: double.infinity,
+    // Make the width take the full available width
     decoration: BoxDecoration(
-      image:  DecorationImage(
+      image: DecorationImage(
         image: CachedNetworkImageProvider(node.imageUrl),
         fit: BoxFit.cover,
       ),
@@ -28,7 +28,6 @@ Widget ListItem (BuildContext context ,int index,Node node) {
     ),
     child: Stack(
       children: [
-
         Opacity(
           opacity: 1,
           child: Container(
@@ -46,15 +45,16 @@ Widget ListItem (BuildContext context ,int index,Node node) {
             child: InkWell(
               onTap: () {
                 // Add your onPressed action here
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NodeDetail(
-                    index: index,
-                    node: node,
-                  )),
-                );
-
-
+                if (clickable) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NodeDetail(
+                              index: index,
+                              node: node,
+                            )),
+                  );
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -71,7 +71,7 @@ Widget ListItem (BuildContext context ,int index,Node node) {
                           Flexible(
                             child: Text(
                               '${node.name}',
-                              style:const TextStyle(
+                              style: const TextStyle(
                                 color: Colors.black54,
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
@@ -80,27 +80,28 @@ Widget ListItem (BuildContext context ,int index,Node node) {
                             ),
                           ),
                           const Spacer(),
-
-                           CircularPercentIndicator(
-                             animation: true,
+                          CircularPercentIndicator(
+                            animation: true,
                             animationDuration: 1500,
-
                             radius: 40.0,
                             lineWidth: 5.0,
-                             percent: node.status == 'Perfect' ? 1 : (node.status == 'Bad' ? 0.3 : 0.75),
-
-                             center:  Text(
-                               textAlign: TextAlign.center,
-                               '${node.distance}\n km',
-                               style: const TextStyle(
-                                 color: Colors.black54,
-                                 fontSize: 15,
-                                 fontWeight: FontWeight.bold,
-                               ),
-                             ),
-
-
-                            progressColor: node.status == 'Perfect' ? Colors.green : (node.status == 'Bad' ? Colors.red : Colors.yellow),
+                            percent: node.status == 'Perfect'
+                                ? 1
+                                : (node.status == 'Bad' ? 0.3 : 0.75),
+                            center: Text(
+                              textAlign: TextAlign.center,
+                              '${node.distance}\n km',
+                              style: const TextStyle(
+                                color: Colors.black54,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            progressColor: node.status == 'Perfect'
+                                ? Colors.green
+                                : (node.status == 'Bad'
+                                    ? Colors.red
+                                    : Colors.yellow),
                           )
                         ],
                       )
