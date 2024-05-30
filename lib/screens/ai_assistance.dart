@@ -78,7 +78,7 @@ class _AIAssistanceState extends State<AIAssistance> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          title: const Text('AI Assistance'),
+          title: const Text('Gemini Recommendations'),
           backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
         floatingActionButton: FloatingActionButton(

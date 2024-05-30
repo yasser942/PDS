@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'title': 'General Weather',
     },
     const GeminiChatUI(): {
-      'title': 'Chat with AI',
+      'title': 'Gemini Chat',
     },
     const Notifications(): {
       'title': 'Notifications',

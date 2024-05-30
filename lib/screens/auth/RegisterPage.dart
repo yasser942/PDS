@@ -100,10 +100,7 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       //backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('Sign up'),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-      ),
+
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(10),

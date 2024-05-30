@@ -87,7 +87,7 @@ class _NodeStatisticsState extends State<NodeStatistics> {
         },
       );
       final response = await http.get(
-          Uri.parse('http://192.168.1.105:5001/predict/$nodeId/$sensorType'));
+          Uri.parse('http://192.168.1.104:5001/predict/$nodeId/$sensorType'));
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
         predictions =

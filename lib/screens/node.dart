@@ -2,7 +2,6 @@ import 'package:draggable_home/draggable_home.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini_flutter/gemini_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:pds/screens/ai_assistance.dart';
 import 'package:pds/screens/map_page.dart';
 import 'package:pds/screens/node-statistics.dart';
@@ -117,7 +116,12 @@ class _NodeDetailState extends State<NodeDetail> {
             }); // Stop loading
           }
         },
-        child: const Icon(LineIcons.commentDots, color: Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/Google_Gemini.png',
+
+              color: Colors.white,),
+        ),
       ),
       appBarColor: Theme.of(context).colorScheme.secondary,
       fullyStretchable: false,
@@ -127,7 +131,7 @@ class _NodeDetailState extends State<NodeDetail> {
           Navigator.pop(context);
         },
       ),
-      title: Text(widget.node.name),
+      title: Text('${widget.node.name} Details'),
       actions: [
         IconButton(
             onPressed: () {

@@ -62,12 +62,13 @@ class _GeminiChatUIState extends State<GeminiChatUI> {
               children: [
                 Expanded(
                   child: TextField(
+
                     onChanged: (text) => setState(() {}),
                     controller: _messageController,
                     onSubmitted: (text) =>
                     isWaitingForResponse ? null : _sendMessage(text), // Modify this line
                     decoration: const InputDecoration.collapsed(
-                        hintText: 'Send a message'),
+                        hintText: 'Have fun chatting with Gemini!'),
                     enabled: !isWaitingForResponse, // Add this line
                   ),
                 ),
